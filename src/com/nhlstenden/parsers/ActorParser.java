@@ -2,6 +2,7 @@ package com.nhlstenden.parsers;
 
 import com.nhlstenden.entities.Actor;
 import com.nhlstenden.entities.Movie;
+import com.nhlstenden.entities.Movies;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class ActorParser extends LineByLineParser {
 
     private Actor currentActor;
     private final List<Actor> actorList;
-    private final Map<String, Movie> movieMap;
+    private final Movies movies;
     private final Pattern pattern;
     private int idCounter = 0;
 
@@ -23,14 +24,14 @@ public class ActorParser extends LineByLineParser {
      * This constructor creates the object and also compiles the regex pattern needed to compile the lines
      * @param file The name of the file
      * @param actorList The list of actors where the actors will be added
-     * @param movieMap The map with all the movies
+     * @param movies The Movies object with all the movies
      */
-    public ActorParser(String file, List<Actor> actorList, Map<String, Movie> movieMap) {
+    public ActorParser(String file, List<Actor> actorList, Movies movies) {
         this.actorList = actorList;
-        this.movieMap = movieMap;
+        this.movies = movies;
         this.fileName = file;
 
-        this.pattern = Pattern.compile("^(((.*?),\\s+)?(.*?))?\\t+(.*?)\\s+\\((.{4})\\)\\s+(?!\\{.*\\})(\\((as\\s+)?(.*)\\)\\s+)?(\\[(.*)\\])?\n");
+        this.pattern = Pattern.compile("^(((.*?),\\s+)?(.*?))?\\t+(.*?)\\s+\\((.{4})\\)\\s+(?!\\{.*\\})(\\((as\\s+)?(.*)\\)\\s+)?(\\[(.*)\\])?");
     }
 
     @Override
@@ -44,6 +45,7 @@ public class ActorParser extends LineByLineParser {
             String lastName = matcher.group(3);
             String firstName = matcher.group(4);
             String movieName = matcher.group(5);
+            String movieYear = matcher.group(6);
 
             // If the firstname isn't null it means we found a new actors so we'll create a new object
             if (firstName != null) {
@@ -53,10 +55,10 @@ public class ActorParser extends LineByLineParser {
                 actorList.add(currentActor);
             }
 
-            // Let's check if the movieMap contains the movie where the actors was in
+            // Let's check if the Movie object exists
             // If it's the case we'll add the movie to the actors and vice versa
-            if (movieMap.containsKey(movieName)) {
-                Movie movie = movieMap.get(movieName);
+            Movie movie = movies.findMovie(movieName, movieYear);
+            if (movie != null) {
                 currentActor.addMovie(movie);
                 movie.addActor(currentActor);
             }

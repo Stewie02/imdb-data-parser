@@ -1,6 +1,7 @@
 package com.nhlstenden.parsers;
 
 import com.nhlstenden.entities.Movie;
+import com.nhlstenden.entities.Movies;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -12,16 +13,16 @@ import java.util.regex.Pattern;
 public class RatingsParser extends LineByLineParser {
 
     private final Pattern pattern;
-    private final Map<String, Movie> movieMap;
+    private final Movies movies;
 
     /**
      * Creates the parser object and initializes the pattern
-     * @param movieMap map containing all the movies
+     * @param movies movies objects containing all the movies
      */
-    public RatingsParser(Map<String, Movie> movieMap) {
-        this.movieMap = movieMap;
+    public RatingsParser(Movies movies) {
+        this.movies = movies;
         this.fileName = "ratings.list";
-        pattern = Pattern.compile("(\\d\\.\\d)\\s*(.+)\\s\\(.*\\)");
+        pattern = Pattern.compile("[\\d.*]{1,10}\\s+[\\d]{1,9}\\s+([\\d.]{3})\\s+(?:\\\"?(.*?)\\\"?)\\s\\(([\\d]{4}|\\?{4})?\\)\\s(?!\\{.*?\\})");
     }
 
     /**
@@ -36,12 +37,19 @@ public class RatingsParser extends LineByLineParser {
             // Get the data from the matcher
             double rating = Double.parseDouble(matcher.group(1));
             String title = matcher.group(2);
+            String year = matcher.group(3);
 
             // Let's check if the movie with the title exists, if so set the right rating
-            if (movieMap.containsKey(title))
-                movieMap.get(title).setRating(rating);
+            Movie movie = movies.findMovie(title, year);
+            if (movie != null) {
+                movie.setRating(rating);
+                System.out.println("Set the rating for movie: " + title);
+            }
             else
                 System.out.println("Movie: " + title + " doesn't exist!");
+        }
+        else {
+            System.out.println("Didn't match");
         }
     }
 

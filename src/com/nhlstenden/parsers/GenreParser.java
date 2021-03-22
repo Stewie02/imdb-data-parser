@@ -2,6 +2,7 @@ package com.nhlstenden.parsers;
 
 import com.nhlstenden.entities.Genre;
 import com.nhlstenden.entities.Movie;
+import com.nhlstenden.entities.Movies;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -13,18 +14,18 @@ import java.util.regex.Pattern;
 public class GenreParser extends LineByLineParser {
 
     private final Map<String, Genre> genreMap;
-    private final Map<String, Movie> movieMap;
+    private final Movies movies;
     private final Pattern pattern;
     private int idCounter = 0;
 
     /**
      * Creates the object and takes the required parameters for a good working object
      * @param genreMap The map where the genres needs to be added
-     * @param movieMap The map which contains all the movies
+     * @param movies The Movies object which contains all the movies
      */
-    public GenreParser(Map<String, Genre> genreMap, Map<String, Movie> movieMap) {
+    public GenreParser(Map<String, Genre> genreMap, Movies movies) {
         this.genreMap = genreMap;
-        this.movieMap = movieMap;
+        this.movies = movies;
         // TODO: add regex!
         this.pattern = Pattern.compile("^\\\"?(.*?)\\\"?\\s+\\((.{4}|.{4}\\/.+)\\)\\s?(?:(?!\\{.*\\(\\#)\\{.*\\})?\\t+(.*)\n");
     }
@@ -40,6 +41,7 @@ public class GenreParser extends LineByLineParser {
         if (matcher.find()) {
             // Get the data from the matcher
             String title = matcher.group(1);
+            String year = matcher.group(2);
             String genreString = matcher.group(3);
 
             // If the title and genreString isn't null the regex gave back the information we need
@@ -53,9 +55,9 @@ public class GenreParser extends LineByLineParser {
                 else
                     genre = genreMap.get(genreString);
 
-                // If the movieMap contains the title we'll add this genres to it
-                if (movieMap.containsKey(title)) {
-                    Movie movie = movieMap.get(title);
+                // If the Movie object exists we'll add this genres to it
+                Movie movie = movies.findMovie(title, year);
+                if (movie != null) {
                     movie.addGenre(genre);
                     genre.addMovie(movie);
                 }

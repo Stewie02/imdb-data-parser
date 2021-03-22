@@ -1,9 +1,8 @@
 package com.nhlstenden.parsers;
 
 import com.nhlstenden.entities.Movie;
+import com.nhlstenden.entities.Movies;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,18 +11,18 @@ import java.util.regex.Pattern;
  */
 public class MovieParser extends LineByLineParser implements Parser {
 
-    private final Map<String, Movie> movies;
+    private final Movies movies;
     private final Pattern pattern;
     private int idCounter = 0;
 
     /**
      * Creates the parser and loads the regex pattern
-     * @param movieMap the map with all the different movies
+     * @param movies the Movies object with all the different movies
      */
-    public MovieParser(Map<String, Movie> movieMap) {
-        movies = movieMap;
+    public MovieParser(Movies movies) {
+        this.movies = movies;
         this.fileName = "movies.list";
-        pattern = Pattern.compile("(?:\\\"?(.*?)\\\"?)\\s+\\((.{4}|.{4}\\/.+)\\)\\s+(?!\\{.*\\})\n");
+        this.pattern = Pattern.compile("(?:\\\"?(.*?)\\\"?)\\s+?\\((\\d{4}|([?]{4}))(\\/.*)?\\)\\s+(?!\\{.*\\})");
     }
 
     /**
@@ -34,6 +33,7 @@ public class MovieParser extends LineByLineParser implements Parser {
     protected void parseLine(String line) {
         // Execute the regex
         Matcher matcher = pattern.matcher(line);
+
         if (matcher.find()) {
             // Get the data out of the regex
             String title = matcher.group(1);
@@ -42,9 +42,8 @@ public class MovieParser extends LineByLineParser implements Parser {
             // If the title or/and year equals null it's a series! We don't want want to add this
             if (title != null && year != null) {
                 if (year.contains("?")) year = "-1";
-                movies.put(title, new Movie(++idCounter, title, Integer.parseInt(year)));
+                movies.addMovie(new Movie(++idCounter, title, Integer.parseInt(year)));
             }
         }
     }
-
 }

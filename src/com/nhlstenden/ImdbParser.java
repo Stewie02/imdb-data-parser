@@ -1,9 +1,6 @@
 package com.nhlstenden;
 
-import com.nhlstenden.entities.Actor;
-import com.nhlstenden.entities.Country;
-import com.nhlstenden.entities.Genre;
-import com.nhlstenden.entities.Movie;
+import com.nhlstenden.entities.*;
 import com.nhlstenden.parsers.*;
 
 import java.util.ArrayList;
@@ -16,7 +13,7 @@ import java.util.Map;
  */
 public class ImdbParser {
 
-    private final Map<String, Movie> movieMap;
+    private final Movies movies;
     private final Map<String, Genre> genreMap;
     private final Map<String, Country> countryMap;
 
@@ -27,7 +24,7 @@ public class ImdbParser {
      * This constructor creates some objects needed in the parser!
      */
     public ImdbParser() {
-        movieMap = new HashMap<>();
+        movies = new Movies();
         genreMap = new HashMap<>();
         countryMap = new HashMap<>();
 
@@ -44,11 +41,11 @@ public class ImdbParser {
         parseAllActorsActresses();
 
         // Parse all the genres
-        Parser genreParser = new GenreParser(genreMap, movieMap);
+        Parser genreParser = new GenreParser(genreMap, movies);
         genreParser.parse();
 
         // Last but not least parse all the countries
-        Parser countryParser = new CountryParser(countryMap, movieMap);
+        Parser countryParser = new CountryParser(countryMap, movies);
         countryParser.parse();
     }
 
@@ -57,7 +54,7 @@ public class ImdbParser {
      */
     public void writeEverythingToTheFiles() {
         Writer writer = new Writer();
-        writer.writeMovies(movieMap, "movie.csv");
+        writer.writeMovies(movies.getMap(), "movie.csv");
 
         writer.writeActors(actorList, "actor.csv", "actor_movie.csv");
         writer.writeActors(actressesList, "actress.csv", "actress_movie.csv");
@@ -69,16 +66,17 @@ public class ImdbParser {
      * Parses everything that has to do with the movies
      */
     private void parseAllMovies() {
-        MovieParser movieParser = new MovieParser(movieMap);
+        MovieParser movieParser = new MovieParser(movies);
         movieParser.parse();
+        System.out.println("Parsed the movies.list");
 
-        Parser movieRunningTimeParser = new MovieRunningTimeParser(movieMap);
+        Parser movieRunningTimeParser = new MovieRunningTimeParser(movies);
         movieRunningTimeParser.parse();
 
-        Parser ratingsParser = new RatingsParser(movieMap);
+        Parser ratingsParser = new RatingsParser(movies);
         ratingsParser.parse();
 
-        Parser businessParser = new BusinessParser(movieMap);
+        Parser businessParser = new BusinessParser(movies);
         businessParser.parse();
     }
 
@@ -86,10 +84,10 @@ public class ImdbParser {
      * Parses the actors and actresses
      */
     private void parseAllActorsActresses() {
-        ActorParser actorsParser = new ActorParser("actors.list", actorList, movieMap);
+        ActorParser actorsParser = new ActorParser("actors.list", actorList, movies);
         actorsParser.parse();
 
-        ActorParser actressesParser = new ActorParser("actresses.list", actressesList, movieMap);
+        ActorParser actressesParser = new ActorParser("actresses.list", actressesList, movies);
         actressesParser.parse();
     }
 

@@ -2,6 +2,7 @@ package com.nhlstenden.parsers;
 
 import com.nhlstenden.entities.Country;
 import com.nhlstenden.entities.Movie;
+import com.nhlstenden.entities.Movies;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -13,18 +14,18 @@ import java.util.regex.Pattern;
 public class CountryParser extends LineByLineParser {
 
     private final Map<String, Country> countryMap;
-    private final Map<String, Movie> movieMap;
+    private final Movies movies;
     private final Pattern pattern;
     private int idCounter = 0;
 
     /**
      * Takes the different objects which this parser needs.
      * @param countryMap Map where the countries will be added
-     * @param movieMap Map with all the movies
+     * @param movies The Movies object with all the movies
      */
-    public CountryParser(Map<String, Country> countryMap, Map<String, Movie> movieMap) {
+    public CountryParser(Map<String, Country> countryMap, Movies movies) {
         this.countryMap = countryMap;
-        this.movieMap = movieMap;
+        this.movies = movies;
         this.fileName = "locations.list";
 
         // TODO: add regex!
@@ -43,6 +44,7 @@ public class CountryParser extends LineByLineParser {
         // Get the information from the regex
         String title = matcher.group(1);
         String countryString = matcher.group(2);
+        String year = matcher.group(3);
 
         // If the regex didn't gave all the information back we don't want to use the line
         if (title != null && countryString != null) {
@@ -57,8 +59,8 @@ public class CountryParser extends LineByLineParser {
                 country = countryMap.get(countryString);
 
             // If the movie exists in the movieMap we'll add the objects to each other
-            if (movieMap.containsKey(title)) {
-                Movie movie = movieMap.get(title);
+            Movie movie = movies.findMovie(title, year);
+            if (movie != null) {
                 country.addMovie(movie);
                 movie.addCountry(country);
             }

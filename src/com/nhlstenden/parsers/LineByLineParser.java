@@ -22,8 +22,8 @@ public abstract class LineByLineParser implements Parser {
             reader = new BufferedReader(new FileReader(Constants.rawFilesFolder + fileName));
             String line = reader.readLine();
             while (line != null) {
-                line = reader.readLine();
                 parseLine(line);
+                line = reader.readLine();
             }
             reader.close();
 
