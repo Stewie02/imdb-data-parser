@@ -1,9 +1,10 @@
 package com.nhlstenden.parsers;
 
+import com.nhlstenden.CurrencyConverter;
 import com.nhlstenden.entities.Movie;
 import com.nhlstenden.entities.Movies;
 
-import java.util.Map;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +19,7 @@ public class BusinessParser extends LineByLineParser implements Parser {
     private final Pattern moviePattern;
     private final Pattern revenuePattern;
     private final Pattern budgetPattern;
+    private CurrencyConverter currencyConverter;
 
     /**
      * This creates the object and takes as a parameter the movieMap
@@ -28,6 +30,12 @@ public class BusinessParser extends LineByLineParser implements Parser {
         this.fileName = "business.list";
 
         this.business = new Business();
+        try {
+            this.currencyConverter = new CurrencyConverter();
+        } catch (IOException e) {
+            System.out.println("Can't parse the currencies. Not parsing the business list");
+            this.currencyConverter = null;
+        }
 
         this.moviePattern = Pattern.compile("MV: \\\"?(.*?)\\\"?\\s+\\((\\d{4}).*\\)\\s(?!\\{)");
         this.revenuePattern = Pattern.compile("GR:\\s([A-z]+)\\s([0-9,]+)");
@@ -36,6 +44,7 @@ public class BusinessParser extends LineByLineParser implements Parser {
 
     @Override
     protected void parseLine(String line) {
+        if (currencyConverter == null) return;
         String kindOfInfo = line.substring(0, 2);
 
         // Let's see what's on the line, now we know what to do

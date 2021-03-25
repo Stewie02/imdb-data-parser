@@ -70,8 +70,8 @@ public class ImdbParser {
         movieParser.parse();
         System.out.println("Parsed the movies.list");
 
-        Parser movieRunningTimeParser = new MovieRunningTimeParser(movies);
-        movieRunningTimeParser.parse();
+//        Parser movieRunningTimeParser = new MovieRunningTimeParser(movies);
+//        movieRunningTimeParser.parse();
 
         Parser ratingsParser = new RatingsParser(movies);
         ratingsParser.parse();

@@ -1,5 +1,6 @@
 package com.nhlstenden.parsers;
 
+import com.nhlstenden.Regex;
 import com.nhlstenden.entities.Movie;
 import com.nhlstenden.entities.Movies;
 
@@ -25,7 +26,7 @@ public class MovieRunningTimeParser extends LineByLineParser implements Parser {
         this.fileName = "running-times.list";
 
         // TODO: Add to REGEX
-        this.pattern = Pattern.compile("(?:(\\\"?(.+)\\\"?)\\s+?\\((.{4}|.{4}\\/.+)\\)\\s?(?:(?!\\{.*\\(\\#)\\{.*\\})?\\t+((\\d+)|.*?\\:(\\d+))\\s+?(?!\\())");
+        this.pattern = Pattern.compile(Regex.runningTimeRegex);
     }
 
     /**
@@ -37,11 +38,18 @@ public class MovieRunningTimeParser extends LineByLineParser implements Parser {
         // Execute the regex
         Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
+            // If the seriesEpisodeName doesn't equal null it's a movie, so we will continue
+            String seriesEpisodeName = matcher.group(5);
+            if (seriesEpisodeName != null) return;
 
             // Get the running time out of the matcher
-            String title = matcher.group(2);
-            String year = matcher.group(3);
-            String runningTimeString = matcher.group(5) == null ? matcher.group(6) : matcher.group(5);
+            String title = matcher.group(1);
+            String year = matcher.group(2);
+            String runningTimeString = matcher.group(10);
+
+            // It can be that the runningTime isn't in group 10, if it isn't it probably is in group 13
+            if (runningTimeString == null)
+                runningTimeString = matcher.group(13);
             int runningTime = Integer.parseInt(runningTimeString);
 
             // If the Movies contains the Movie we'll add the running time to it!

@@ -7,4 +7,5 @@ public class Constants {
 
     // The folder where we want to write the parse files
     public static final String writeFolder = "C:\\Users\\stefa\\Desktop\\IMDB parser\\write_files\\";
+
 }
