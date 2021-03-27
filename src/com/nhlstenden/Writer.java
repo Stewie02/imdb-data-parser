@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This class writes the objects to the CSV files
@@ -19,12 +20,15 @@ public class Writer {
      * @param outputFile The filename where everything will be stored
      */
     public void writeMovies(Map<String, Movie> map, String outputFile) {
+        if (map.size() == 0) return;
+        Movie firstMovie = map.values().stream().findFirst().get();
+
         // First create the file
         createFile(outputFile);
 
         try {
             FileWriter writer = new FileWriter(Constants.writeFolder + outputFile);
-            writer.write(Movie.getHeader() + '\n');
+            writer.write(firstMovie.getHeader() + '\n');
 
             // For every movie write the CSV
             for (Map.Entry<String, Movie> entry : map.entrySet()) {
@@ -44,6 +48,9 @@ public class Writer {
      * @param outputGenreMovieFile Filename to output the genreMovie
      */
     public void writeGenres(Map<String, Genre> map, String outputGenreFile, String outputGenreMovieFile) {
+        if (map.size() == 0) return;
+        Genre firstGenre = map.values().stream().findFirst().get();
+
         // Create both files
         createFile(outputGenreFile);
         createFile(outputGenreMovieFile);
@@ -53,7 +60,7 @@ public class Writer {
             FileWriter writerGenreMovie = new FileWriter(outputGenreMovieFile);
 
             // Write the headers
-            writerGenre.write(Genre.getHeader() + '\n');
+            writerGenre.write(firstGenre.getHeader() + '\n');
             writerGenreMovie.write("genreId,movieId");
 
             // Every Genre write it to the file
@@ -78,6 +85,9 @@ public class Writer {
      * @param outputCountryMovieFile Filename to output the countryMovie
      */
     public void writeCountries(Map<String, Country> map, String outputCountryFile, String outputCountryMovieFile) {
+        if (map.size() == 0) return;
+        Country firstCountry = map.values().stream().findFirst().get();
+
         // First create the files
         createFile(outputCountryFile);
         createFile(outputCountryMovieFile);
@@ -87,7 +97,7 @@ public class Writer {
             FileWriter writerCountryMovie = new FileWriter(outputCountryMovieFile);
 
             // Write the headers!
-            writerCountry.write(Country.getHeader() + '\n');
+            writerCountry.write(firstCountry.getHeader() + '\n');
             writerCountryMovie.write("countryId,movieId\n");
 
             // For every country write the record to the file
@@ -114,6 +124,9 @@ public class Writer {
      * @param outputFileActorMovie The filename to output the actorMovie to
      */
     public void writeActors(List<Actor> actors, String outputFileActor, String outputFileActorMovie) {
+        if (actors.size() == 0)
+            return;
+
         // First create the files
         createFile(outputFileActor);
         createFile(outputFileActorMovie);
@@ -123,7 +136,7 @@ public class Writer {
             FileWriter writerActorMovie = new FileWriter(outputFileActorMovie);
 
             // Write the headers
-            writerActor.write(Actor.getHeader() + '\n');
+            writerActor.write(actors.get(0).getHeader() + '\n');
             writerActorMovie.write("actorId,movieId\n");
 
             // For every actors write the CSV

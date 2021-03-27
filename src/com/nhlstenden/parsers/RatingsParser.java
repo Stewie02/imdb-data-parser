@@ -4,7 +4,9 @@ import com.nhlstenden.FormatMethods;
 import com.nhlstenden.Regex;
 import com.nhlstenden.entities.Movie;
 import com.nhlstenden.entities.Movies;
+import com.nhlstenden.entities.Rating;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,13 +17,15 @@ public class RatingsParser extends LineByLineParser {
 
     private final Pattern pattern;
     private final Movies movies;
+    private final List<Rating> ratings;
 
     /**
      * Creates the parser object and initializes the pattern
      * @param movies movies objects containing all the movies
      */
-    public RatingsParser(Movies movies) {
+    public RatingsParser(Movies movies, List<Rating> ratings) {
         this.movies = movies;
+        this.ratings = ratings;
         this.fileName = "ratings.list";
         pattern = Pattern.compile(Regex.ratingsRegex);
     }
@@ -39,7 +43,7 @@ public class RatingsParser extends LineByLineParser {
             if (matcher.group("seriesEpisodeName") != null || matcher.group("seriesSeason") != null) return;
 
             // Get the data from the matcher
-            double rating = Double.parseDouble(matcher.group("rank"));
+            double ratingValue = Double.parseDouble(matcher.group("rank"));
             int votes = Integer.parseInt(matcher.group("votes"));
             String title = matcher.group("title");
             String year = matcher.group("year");
@@ -48,8 +52,11 @@ public class RatingsParser extends LineByLineParser {
             // Let's check if the movie with the title exists, if so set the right rating
             Movie movie = movies.findMovie(title, year, movieNamePerYear);
             if (movie != null) {
-                movie.setRating(rating);
-                movie.setVotes(votes);
+                Rating rating = new Rating(movie);
+                rating.setRating(ratingValue);
+                rating.setVotes(votes);
+                ratings.add(rating);
+
                 System.out.println("Set the rating for movie: " + title);
             }
             else

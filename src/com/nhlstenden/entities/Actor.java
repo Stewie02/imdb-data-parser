@@ -77,7 +77,7 @@ public class Actor implements Entity, HasId {
      * Returns the header of the CSV file
      * @return Header of the CSV file
      */
-    public static String getHeader() {
+    public String getHeader() {
         return "id,lastName,FirstName";
     }
 

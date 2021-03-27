@@ -55,7 +55,7 @@ public class Genre implements Entity, HasId {
      * Returns the headers of the CSV file
      * @return String with the headers of the CSV
      */
-    public static String getHeader() {
+    public String getHeader() {
         return "id,genre";
     }
 }

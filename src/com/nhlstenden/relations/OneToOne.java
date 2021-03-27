@@ -7,20 +7,20 @@ public class OneToOne {
 
     private final HasId relationWith;
 
-    protected OneToOne(HasId relationWith) {
+    public OneToOne(HasId relationWith) {
         this.relationWith = relationWith;
     }
 
-    protected int getRelationId() {
+    public int getRelationId() {
         return relationWith.getId();
     }
 
-    protected HasId getRelated() {
+    public HasId getRelated() {
         return relationWith;
     }
 
-    protected String getForeignKeyCSVField() {
-        return FormatMethods.toCsvField(relationWith.getId()) + ',';
+    public String getForeignKeyCSVField() {
+        return FormatMethods.toCsvField(relationWith.getId());
     }
 
 }

@@ -8,4 +8,10 @@ public interface Entity {
      */
     public abstract String toCSV();
 
+    /**
+     * This function return the header of the record
+     * @return The header
+     */
+    public abstract String getHeader();
+
 }

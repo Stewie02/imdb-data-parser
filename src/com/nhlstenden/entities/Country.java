@@ -52,7 +52,7 @@ public class Country implements Entity, HasId {
         return country;
     }
 
-    public static String getHeader() {
+    public String getHeader() {
         return "id,country";
     }
 

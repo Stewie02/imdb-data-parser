@@ -19,6 +19,7 @@ public class ImdbParser {
 
     private final List<Actor> actorList;
     private final List<Actor> actressesList;
+    private final List<Rating> ratings;
 
     /**
      * This constructor creates some objects needed in the parser!
@@ -30,6 +31,7 @@ public class ImdbParser {
 
         actorList = new ArrayList<>();
         actressesList = new ArrayList<>();
+        ratings = new ArrayList<>();
     }
 
     /**
@@ -43,7 +45,7 @@ public class ImdbParser {
         Parser movieRunningTimeParser = new MovieRunningTimeParser(movies);
         movieRunningTimeParser.parse();
 
-        Parser ratingsParser = new RatingsParser(movies);
+        Parser ratingsParser = new RatingsParser(movies, ratings);
         ratingsParser.parse();
 
         Writer writer = new Writer();
@@ -85,7 +87,7 @@ public class ImdbParser {
         Parser movieRunningTimeParser = new MovieRunningTimeParser(movies);
         movieRunningTimeParser.parse();
 
-        Parser ratingsParser = new RatingsParser(movies);
+        Parser ratingsParser = new RatingsParser(movies, ratings);
         ratingsParser.parse();
 
         Parser businessParser = new BusinessParser(movies);
