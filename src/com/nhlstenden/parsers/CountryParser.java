@@ -59,11 +59,11 @@ public class CountryParser extends LineByLineParser {
                 country = countryMap.get(countryString);
 
             // If the movie exists in the movieMap we'll add the objects to each other
-            Movie movie = movies.findMovie(title, year);
-            if (movie != null) {
-                country.addMovie(movie);
-                movie.addCountry(country);
-            }
+//            Movie movie = movies.findMovie(title, year);
+//            if (movie != null) {
+//                country.addMovie(movie);
+//                movie.addCountry(country);
+//            }
 
         }
     }

@@ -2,6 +2,7 @@ package com.nhlstenden.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import static com.nhlstenden.FormatMethods.toCsvField;
 
 /**
  * This Genre class represents the genres that will be written to the CSV
@@ -30,8 +31,8 @@ public class Genre implements Entity {
      */
     @Override
     public String toCSV() {
-        return id + ',' +
-                genre;
+        return toCsvField(id) + ',' +
+                toCsvField(genre);
     }
 
     public void addMovie(Movie movie) {

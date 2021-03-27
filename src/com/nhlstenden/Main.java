@@ -8,7 +8,7 @@ public class Main {
 
         ImdbParser parser = new ImdbParser();
         parser.parse();
-        parser.writeEverythingToTheFiles();
+//        parser.writeEverythingToTheFiles();
 
         System.out.println("We are finished!");
 

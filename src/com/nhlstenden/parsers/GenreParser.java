@@ -56,11 +56,11 @@ public class GenreParser extends LineByLineParser {
                     genre = genreMap.get(genreString);
 
                 // If the Movie object exists we'll add this genres to it
-                Movie movie = movies.findMovie(title, year);
-                if (movie != null) {
-                    movie.addGenre(genre);
-                    genre.addMovie(movie);
-                }
+//                Movie movie = movies.findMovie(title, year);
+//                if (movie != null) {
+//                    movie.addGenre(genre);
+//                    genre.addMovie(movie);
+//                }
             }
         }
     }

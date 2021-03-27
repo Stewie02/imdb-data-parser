@@ -3,6 +3,7 @@ package com.nhlstenden.entities;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import static com.nhlstenden.FormatMethods.toCsvField;
 
 /**
  * This Actor class represents the actors that will be written to the CSV
@@ -35,9 +36,9 @@ public class Actor implements Entity {
      */
     @Override
     public String toCSV() {
-        return id + ',' +
-                lastName + ',' +
-                firstName;
+        return toCsvField(id) + ',' +
+                toCsvField(lastName) + ',' +
+                toCsvField(firstName);
     }
 
     public void addMovie(Movie movie) {

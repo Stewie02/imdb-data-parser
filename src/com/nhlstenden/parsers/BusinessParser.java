@@ -64,7 +64,7 @@ public class BusinessParser extends LineByLineParser implements Parser {
      * @param business The business object when the updated information
      */
     private void updateMovie(Business business) {
-        Movie movie = movies.findMovie(business.getTitle(), business.getYear());
+        Movie movie = movies.findMovie(business.getTitle(), business.getYear(), business.getMovieNamePerYear());
         if (movie != null) {
             movie.setBudget(business.getBudget());
             movie.setRevenue(business.getRevenue());
@@ -124,6 +124,7 @@ class Business {
     private int revenue;
     private int budget;
     private int year;
+    private String movieNamePerYear;
 
     /**
      * Adds the revenue to the object
@@ -167,6 +168,10 @@ class Business {
 
     public int getBudget() {
         return budget;
+    }
+
+    public String getMovieNamePerYear() {
+        return movieNamePerYear;
     }
 
 }

@@ -43,7 +43,7 @@ public class ActorParser extends LineByLineParser {
         if (matcher.find()) {
             String lastName = matcher.group(3);
             String firstName = matcher.group(4);
-            String movieName = matcher.group(5);
+            String title = matcher.group(5);
             String movieYear = matcher.group(6);
 
             // If the firstname isn't null it means we found a new actors so we'll create a new object
@@ -56,11 +56,11 @@ public class ActorParser extends LineByLineParser {
 
             // Let's check if the Movie object exists
             // If it's the case we'll add the movie to the actors and vice versa
-            Movie movie = movies.findMovie(movieName, movieYear);
-            if (movie != null) {
-                currentActor.addMovie(movie);
-                movie.addActor(currentActor);
-            }
+//            Movie movie = movies.findMovie(movieName, movieYear);
+//            if (movie != null) {
+//                currentActor.addMovie(movie);
+//                movie.addActor(currentActor);
+//            }
         }
     }
 

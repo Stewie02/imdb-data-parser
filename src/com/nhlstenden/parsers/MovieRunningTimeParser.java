@@ -1,5 +1,6 @@
 package com.nhlstenden.parsers;
 
+import com.nhlstenden.FormatMethods;
 import com.nhlstenden.Regex;
 import com.nhlstenden.entities.Movie;
 import com.nhlstenden.entities.Movies;
@@ -38,25 +39,28 @@ public class MovieRunningTimeParser extends LineByLineParser implements Parser {
         // Execute the regex
         Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
-            // If the seriesEpisodeName doesn't equal null it's a movie, so we will continue
-            String seriesEpisodeName = matcher.group(5);
-            if (seriesEpisodeName != null) return;
+            // If the seriesEpisodeName or seriesSeason equals null it's not a movie, so we will return
+            if (matcher.group("seriesEpisodeName") != null || matcher.group("seriesSeason") != null) return;
 
             // Get the running time out of the matcher
-            String title = matcher.group(1);
-            String year = matcher.group(2);
-            String runningTimeString = matcher.group(10);
+            String title = matcher.group("title");
+            int year = Integer.parseInt(matcher.group("year").contains("?") ? "-1" : matcher.group("year"));
+            String runningTimeString = matcher.group("time");
+            String movieNamePerYear = FormatMethods.getMovieNamePerYear(matcher);
 
-            // It can be that the runningTime isn't in group 10, if it isn't it probably is in group 13
+            // It can be that the runningTime isn't in group time, if it isn't it probably is in group countryTime
             if (runningTimeString == null)
-                runningTimeString = matcher.group(13);
+                runningTimeString = matcher.group("countryTime");
+            if (runningTimeString == null) {
+                System.out.println(line);
+                return;
+            }
             int runningTime = Integer.parseInt(runningTimeString);
 
             // If the Movies contains the Movie we'll add the running time to it!
-            Movie movie = movies.findMovie(title, year);
+            Movie movie = movies.findMovie(title, year, movieNamePerYear);
             if (movie != null) {
                 movie.setRunningTime(runningTime);
-                System.out.println("Found the movie!");
             }
             else
                 System.out.println("Movie: " + title + " doesn't exist!");

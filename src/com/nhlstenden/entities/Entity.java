@@ -7,4 +7,5 @@ public interface Entity {
      * @return The CSV record
      */
     public abstract String toCSV();
+
 }

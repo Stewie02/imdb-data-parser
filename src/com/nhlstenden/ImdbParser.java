@@ -37,16 +37,28 @@ public class ImdbParser {
      */
     public void parse() {
         // First parse all the movies and actors/actresses
-        parseAllMovies();
-        parseAllActorsActresses();
+        MovieParser movieParser = new MovieParser(movies);
+        movieParser.parse();
 
-        // Parse all the genres
-        Parser genreParser = new GenreParser(genreMap, movies);
-        genreParser.parse();
+        Parser movieRunningTimeParser = new MovieRunningTimeParser(movies);
+        movieRunningTimeParser.parse();
 
-        // Last but not least parse all the countries
-        Parser countryParser = new CountryParser(countryMap, movies);
-        countryParser.parse();
+        Parser ratingsParser = new RatingsParser(movies);
+        ratingsParser.parse();
+
+        Writer writer = new Writer();
+        writer.writeMovies(movies.getMap(), "movies.csv");
+
+//        parseAllMovies();
+//        parseAllActorsActresses();
+//
+//        // Parse all the genres
+//        Parser genreParser = new GenreParser(genreMap, movies);
+//        genreParser.parse();
+//
+//        // Last but not least parse all the countries
+//        Parser countryParser = new CountryParser(countryMap, movies);
+//        countryParser.parse();
     }
 
     /**
@@ -70,8 +82,8 @@ public class ImdbParser {
         movieParser.parse();
         System.out.println("Parsed the movies.list");
 
-//        Parser movieRunningTimeParser = new MovieRunningTimeParser(movies);
-//        movieRunningTimeParser.parse();
+        Parser movieRunningTimeParser = new MovieRunningTimeParser(movies);
+        movieRunningTimeParser.parse();
 
         Parser ratingsParser = new RatingsParser(movies);
         ratingsParser.parse();

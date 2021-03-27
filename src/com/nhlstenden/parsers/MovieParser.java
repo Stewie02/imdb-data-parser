@@ -1,5 +1,6 @@
 package com.nhlstenden.parsers;
 
+import com.nhlstenden.FormatMethods;
 import com.nhlstenden.Regex;
 import com.nhlstenden.entities.Movie;
 import com.nhlstenden.entities.Movies;
@@ -35,17 +36,18 @@ public class MovieParser extends LineByLineParser implements Parser {
         // Execute the regex
         Matcher matcher = pattern.matcher(line);
 
-        if (matcher.find()) {
+        if (matcher.matches()) {
             // Get the data out of the regex
-            String title = matcher.group(1);
-            String year = matcher.group(2);
-            String suspended = matcher.group(12);
-            String seriesStartYear = matcher.group(5);
+            String title = matcher.group("title");
+            String year = matcher.group("year");
+            String movieNamePerYear = FormatMethods.getMovieNamePerYear(matcher);
 
-            // If the seriesStartYear doesn't equal null than we know that it's a movie
-            if (seriesStartYear != null && suspended == null) {
+            // All of the checked value need to be zero before we know it's a movie!
+            if (matcher.group("seriesPeriod") == null && matcher.group("suspended") == null &&
+                    matcher.group("seriesEpisodeName") == null && matcher.group("seriesSeason") == null &&
+                    matcher.group("endYear") == null) {
                 if (year.contains("?")) year = "-1";
-                movies.addMovie(new Movie(++idCounter, title, Integer.parseInt(year)));
+                movies.addMovie(new Movie(++idCounter, title, Integer.parseInt(year), movieNamePerYear));
             }
         }
     }

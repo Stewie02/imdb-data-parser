@@ -20,10 +20,10 @@ public class Writer {
      */
     public void writeMovies(Map<String, Movie> map, String outputFile) {
         // First create the file
-
         createFile(outputFile);
+
         try {
-            FileWriter writer = new FileWriter(outputFile);
+            FileWriter writer = new FileWriter(Constants.writeFolder + outputFile);
             writer.write(Movie.getHeader() + '\n');
 
             // For every movie write the CSV
@@ -32,6 +32,7 @@ public class Writer {
             }
             writer.close();
         } catch (IOException e) {
+            System.out.println("There was a problem writing the movies csv");
             e.printStackTrace();
         }
     }

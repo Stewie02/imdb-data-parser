@@ -2,6 +2,8 @@ package com.nhlstenden.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import static com.nhlstenden.FormatMethods.toCsvField;
+
 
 /**
  * This Country class represents the countries that will be written to the CSV
@@ -28,8 +30,8 @@ public class Country implements Entity {
 
     @Override
     public String toCSV() {
-        return id + ','
-                + country;
+        return toCsvField(id) + ','
+                + toCsvField(country);
     }
 
     public void addMovie(Movie movie) {
