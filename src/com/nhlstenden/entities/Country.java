@@ -9,7 +9,7 @@ import static com.nhlstenden.FormatMethods.toCsvField;
  * This Country class represents the countries that will be written to the CSV
  * It has some basic getters/setters and add functions
  */
-public class Country implements Entity {
+public class Country implements Entity, HasId {
 
     private final int id;
     private final String country;

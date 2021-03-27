@@ -9,7 +9,7 @@ import static com.nhlstenden.FormatMethods.toCsvField;
  * This Movie class represents the movies that will be written to the CSV
  * It has some basic getters/setters and add functions
  */
-public class Movie implements Entity {
+public class Movie implements Entity, HasId {
 
     private int id;
     private String title;

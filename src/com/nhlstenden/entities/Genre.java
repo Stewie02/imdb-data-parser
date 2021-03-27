@@ -8,7 +8,7 @@ import static com.nhlstenden.FormatMethods.toCsvField;
  * This Genre class represents the genres that will be written to the CSV
  * It has some basic getters/setters and add functions
  */
-public class Genre implements Entity {
+public class Genre implements Entity, HasId {
 
     private final int id;
     private final String genre;

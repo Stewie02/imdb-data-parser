@@ -1,7 +1,6 @@
 package com.nhlstenden.parsers;
 
 import com.nhlstenden.entities.Country;
-import com.nhlstenden.entities.Movie;
 import com.nhlstenden.entities.Movies;
 
 import java.util.Map;
