@@ -26,6 +26,17 @@ public class CurrencyConverter {
         }
     }
 
+    public double convertToEur(String amount, String currency) {
+
+        StringBuilder stringBuilder = new StringBuilder(amount);
+        int indexOfComma = stringBuilder.indexOf(",");
+        while (indexOfComma != -1) {
+            stringBuilder.deleteCharAt(indexOfComma);
+            indexOfComma = stringBuilder.indexOf(",");
+        }
+
+        return convertToEur(Double.parseDouble(String.valueOf(stringBuilder)), currency);
+    }
 
     private String getExchangeRates() throws IOException {
         String apiUrl = "https://api.exchangeratesapi.io/latest?base=EUR";

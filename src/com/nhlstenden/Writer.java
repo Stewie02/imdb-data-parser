@@ -1,10 +1,14 @@
 package com.nhlstenden;
 
-import com.nhlstenden.entities.*;
+import com.nhlstenden.entities.Movie;
+import com.nhlstenden.entities.containers.Container;
+import com.nhlstenden.entities.interfaces.Entity;
+import com.nhlstenden.entities.interfaces.Writable;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,152 +18,27 @@ import java.util.Optional;
  */
 public class Writer {
 
-    /**
-     * Writes all the movies to the CSV
-     * @param map Map containing all the movies
-     * @param outputFile The filename where everything will be stored
-     */
-    public void writeMovies(Map<String, Movie> map, String outputFile) {
-        if (map.size() == 0) return;
-        Movie firstMovie = map.values().stream().findFirst().get();
-
-        // First create the file
-        createFile(outputFile);
-
+    public void writeWritableList(List<Writable> entities, String fileToWriteTo) {
+        if (entities.size() == 0) {
+            System.out.println("0 entities");
+            return;
+        }
+        createFile(fileToWriteTo);
         try {
-            FileWriter writer = new FileWriter(Constants.writeFolder + outputFile);
-            writer.write(firstMovie.getHeader() + '\n');
+            FileWriter writer = new FileWriter(Constants.writeFolder + fileToWriteTo);
+            writer.write(entities.get(0).getHeader() + '\n');
 
-            // For every movie write the CSV
-            for (Map.Entry<String, Movie> entry : map.entrySet()) {
-                writer.write(entry.getValue().toCSV() + '\n');
+            for (Writable e : entities) {
+                writer.write(e.toCSV() + '\n');
             }
             writer.close();
         } catch (IOException e) {
-            System.out.println("There was a problem writing the movies csv");
+            System.out.println("There was a problem writing the file: " + fileToWriteTo);
             e.printStackTrace();
         }
+
     }
 
-    /**
-     * Writes all the genres and the genreMovie CSV file
-     * @param map Map with all the genres
-     * @param outputGenreFile Filename to output the genres
-     * @param outputGenreMovieFile Filename to output the genreMovie
-     */
-    public void writeGenres(Map<String, Genre> map, String outputGenreFile, String outputGenreMovieFile) {
-        if (map.size() == 0) return;
-        Genre firstGenre = map.values().stream().findFirst().get();
-
-        // Create both files
-        createFile(outputGenreFile);
-        createFile(outputGenreMovieFile);
-
-        try {
-            FileWriter writerGenre = new FileWriter(outputGenreFile);
-            FileWriter writerGenreMovie = new FileWriter(outputGenreMovieFile);
-
-            // Write the headers
-            writerGenre.write(firstGenre.getHeader() + '\n');
-            writerGenreMovie.write("genreId,movieId");
-
-            // Every Genre write it to the file
-            for (Map.Entry<String, Genre> entry : map.entrySet()) {
-                writerGenre.write(entry.getValue().toCSV() + '\n');
-
-                // For every movie in here write the records to show the relation between the records
-                for (Movie movie : entry.getValue().getMovies())
-                    writerGenreMovie.write(entry.getValue().getId() + "," + movie.getId() + '\n');
-            }
-            writerGenre.close();
-            writerGenreMovie.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Writes all the countries and the countryMovie CSV file
-     * @param map Map with all the genres
-     * @param outputCountryFile Filename to output the countries
-     * @param outputCountryMovieFile Filename to output the countryMovie
-     */
-    public void writeCountries(Map<String, Country> map, String outputCountryFile, String outputCountryMovieFile) {
-        if (map.size() == 0) return;
-        Country firstCountry = map.values().stream().findFirst().get();
-
-        // First create the files
-        createFile(outputCountryFile);
-        createFile(outputCountryMovieFile);
-
-        try {
-            FileWriter writerCountry = new FileWriter(outputCountryFile);
-            FileWriter writerCountryMovie = new FileWriter(outputCountryMovieFile);
-
-            // Write the headers!
-            writerCountry.write(firstCountry.getHeader() + '\n');
-            writerCountryMovie.write("countryId,movieId\n");
-
-            // For every country write the record to the file
-            for (Map.Entry<String, Country> entry : map.entrySet()) {
-                writerCountry.write(entry.getValue().toCSV() + '\n');
-
-                 // For every movie write the record to show the relation between the records
-                for (Movie movie : entry.getValue().getMovies())
-                    writerCountryMovie.write(entry.getValue().getId() + ',' + movie.getId() + '\n');
-            }
-
-            // Close the writers
-            writerCountry.close();
-            writerCountryMovie.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Write all the actors to the CSV file
-     * @param actors The list with Actors
-     * @param outputFileActor The filename to output the actors to
-     * @param outputFileActorMovie The filename to output the actorMovie to
-     */
-    public void writeActors(List<Actor> actors, String outputFileActor, String outputFileActorMovie) {
-        if (actors.size() == 0)
-            return;
-
-        // First create the files
-        createFile(outputFileActor);
-        createFile(outputFileActorMovie);
-
-        try {
-            FileWriter writerActor = new FileWriter(outputFileActor);
-            FileWriter writerActorMovie = new FileWriter(outputFileActorMovie);
-
-            // Write the headers
-            writerActor.write(actors.get(0).getHeader() + '\n');
-            writerActorMovie.write("actorId,movieId\n");
-
-            // For every actors write the CSV
-            for (Actor a : actors) {
-                writerActor.write(a.toCSV() + '\n');
-
-                // For every movie write the record to show the relation between movie and actor
-                for (Movie movie : a.getMovies()) {
-                    writerActorMovie.write(a.getId() + ',' + movie.getId() + '\n');
-                }
-            }
-            // Close the files
-            writerActor.close();
-            writerActorMovie.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This function creates a file with the given output name
-     * @param outputFile name for the new file
-     */
     private void createFile(String outputFile) {
         try {
             File myObj = new File(Constants.writeFolder + outputFile);
@@ -173,4 +52,5 @@ public class Writer {
             e.printStackTrace();
         }
     }
+
 }

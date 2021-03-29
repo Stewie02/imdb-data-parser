@@ -1,13 +1,13 @@
 package com.nhlstenden.relations;
 
 import com.nhlstenden.FormatMethods;
-import com.nhlstenden.entities.HasId;
+import com.nhlstenden.entities.interfaces.HasId;
 
-public class OneToOne {
+public class OneToOne <T extends HasId> {
 
-    private final HasId relationWith;
+    private final T relationWith;
 
-    public OneToOne(HasId relationWith) {
+    public OneToOne(T relationWith) {
         this.relationWith = relationWith;
     }
 
@@ -15,7 +15,7 @@ public class OneToOne {
         return relationWith.getId();
     }
 
-    public HasId getRelated() {
+    public T getRelated() {
         return relationWith;
     }
 

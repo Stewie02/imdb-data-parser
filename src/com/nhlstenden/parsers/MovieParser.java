@@ -1,9 +1,9 @@
 package com.nhlstenden.parsers;
 
 import com.nhlstenden.FormatMethods;
-import com.nhlstenden.Regex;
+import static com.nhlstenden.Regex.moviesRegex;
 import com.nhlstenden.entities.Movie;
-import com.nhlstenden.entities.Movies;
+import com.nhlstenden.entities.containers.Container;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  */
 public class MovieParser extends LineByLineParser implements Parser {
 
-    private final Movies movies;
+    private final Container<Movie> movies;
     private final Pattern pattern;
     private int idCounter = 0;
 
@@ -21,10 +21,11 @@ public class MovieParser extends LineByLineParser implements Parser {
      * Creates the parser and loads the regex pattern
      * @param movies the Movies object with all the different movies
      */
-    public MovieParser(Movies movies) {
+    public MovieParser(Container<Movie> movies) {
+        super("movies.list");
+
         this.movies = movies;
-        this.fileName = "movies.list";
-        this.pattern = Pattern.compile(Regex.moviesList);
+        this.pattern = Pattern.compile(moviesRegex);
     }
 
     /**
@@ -40,14 +41,14 @@ public class MovieParser extends LineByLineParser implements Parser {
             // Get the data out of the regex
             String title = matcher.group("title");
             String year = matcher.group("year");
-            String movieNamePerYear = FormatMethods.getMovieNamePerYear(matcher);
+            String movieNamePerYear = matcher.group("movieNamePerYear");
 
             // All of the checked value need to be zero before we know it's a movie!
             if (matcher.group("seriesPeriod") == null && matcher.group("suspended") == null &&
                     matcher.group("seriesEpisodeName") == null && matcher.group("seriesSeason") == null &&
                     matcher.group("endYear") == null) {
                 if (year.contains("?")) year = "-1";
-                movies.addMovie(new Movie(++idCounter, title, Integer.parseInt(year), movieNamePerYear));
+                movies.add(new Movie(++idCounter, title, Integer.parseInt(year), movieNamePerYear));
             }
         }
     }

@@ -1,8 +1,8 @@
 package com.nhlstenden.entities;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.nhlstenden.entities.interfaces.Entity;
+import com.nhlstenden.entities.interfaces.HasId;
+
 import static com.nhlstenden.FormatMethods.toCsvField;
 
 /**
@@ -11,23 +11,23 @@ import static com.nhlstenden.FormatMethods.toCsvField;
  */
 public class Actor implements Entity, HasId {
 
-    private int id;
-    private String lastName;
-    private String firstName;
-    private final List<Movie> movies;
+    private final int id;
+    private final String lastName;
+    private final String firstName;
+    private final Gender gender;
 
     /**
      * Creates the Actor object
      * @param id the id of this new object
      * @param firstName the firstname of this new object
      * @param lastName the lastname of this new object
+     * @param gender the gender of the actor
      */
-    public Actor(int id, String firstName, String lastName) {
-        this.movies = new ArrayList<>();
-
+    public Actor(int id, String firstName, String lastName, Gender gender) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.gender = gender;
     }
 
     /**
@@ -36,41 +36,25 @@ public class Actor implements Entity, HasId {
      */
     @Override
     public String toCSV() {
+        char genderChar = switch (gender) {
+            case FEMALE -> 'F';
+            case MALE -> 'M';
+            case NEUTRAL -> 'N';
+        };
+
         return toCsvField(id) + ',' +
                 toCsvField(lastName) + ',' +
-                toCsvField(firstName);
+                toCsvField(firstName) + ',' +
+                genderChar;
     }
 
-    public void addMovie(Movie movie) {
-        movies.add(movie);
-    }
-
-    public Collection<Movie> getMovies() {
-        return movies;
+    @Override
+    public EntityKey getKey() {
+        return Actor.getKey(firstName, lastName);
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     /**
@@ -78,7 +62,16 @@ public class Actor implements Entity, HasId {
      * @return Header of the CSV file
      */
     public String getHeader() {
-        return "id,lastName,FirstName";
+        return "id,first_name,last_name,gender";
     }
 
+    public static EntityKey getKey(String firstName, String lastName) {
+        return new EntityKey(firstName + lastName);
+    }
+
+    public enum Gender {
+        FEMALE,
+        MALE,
+        NEUTRAL
+    }
 }

@@ -1,11 +1,10 @@
 package com.nhlstenden.parsers;
 
 import com.nhlstenden.FormatMethods;
-import com.nhlstenden.Regex;
+import static com.nhlstenden.Regex.runningTimeRegex;
 import com.nhlstenden.entities.Movie;
-import com.nhlstenden.entities.Movies;
+import com.nhlstenden.entities.containers.Container;
 
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,20 +13,17 @@ import java.util.regex.Pattern;
  */
 public class MovieRunningTimeParser extends LineByLineParser implements Parser {
 
-    private final Movies movies;
+    private final Container<Movie> movies;
     private final Pattern pattern;
 
     /**
      * Takes in the movieMap, this object can put the right running-time to the right Movie object
      * @param movies Movies object containing all the different movies
      */
-    public MovieRunningTimeParser(Movies movies) {
-        super();
+    public MovieRunningTimeParser(Container<Movie> movies) {
+        super("running-times.list");
         this.movies = movies;
-        this.fileName = "running-times.list";
-
-        // TODO: Add to REGEX
-        this.pattern = Pattern.compile(Regex.runningTimeRegex);
+        this.pattern = Pattern.compile(runningTimeRegex);
     }
 
     /**
@@ -46,7 +42,7 @@ public class MovieRunningTimeParser extends LineByLineParser implements Parser {
             String title = matcher.group("title");
             int year = Integer.parseInt(matcher.group("year").contains("?") ? "-1" : matcher.group("year"));
             String runningTimeString = matcher.group("time");
-            String movieNamePerYear = FormatMethods.getMovieNamePerYear(matcher);
+            String movieNamePerYear = matcher.group("movieNamePerYear");
 
             // It can be that the runningTime isn't in group time, if it isn't it probably is in group countryTime
             if (runningTimeString == null)
@@ -58,12 +54,12 @@ public class MovieRunningTimeParser extends LineByLineParser implements Parser {
             int runningTime = Integer.parseInt(runningTimeString);
 
             // If the Movies contains the Movie we'll add the running time to it!
-            Movie movie = movies.findMovie(title, year, movieNamePerYear);
+            Movie movie = movies.find(Movie.getKey(title, year, movieNamePerYear));
             if (movie != null) {
                 movie.setRunningTime(runningTime);
             }
             else
-                System.out.println("Movie: " + title + " doesn't exist!");
+                System.out.println("RT Movie: " + title + " doesn't exist!");
         }
     }
 

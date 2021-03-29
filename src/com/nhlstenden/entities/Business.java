@@ -1,23 +1,26 @@
 package com.nhlstenden.entities;
 
-import com.nhlstenden.FormatMethods;
+import com.nhlstenden.entities.interfaces.Entity;
 import com.nhlstenden.relations.OneToOne;
+import static com.nhlstenden.FormatMethods.toCsvField;
 
 public class Business implements Entity {
 
-    private final OneToOne oneToOneRelation;
-    private int revenue = -1;
-    private int budget = -1;
+    private final OneToOne<Movie> oneToOneRelation;
+    private final int revenue;
+    private final int budget;
 
-    public Business(Movie relatedMovie) {
-        this.oneToOneRelation = new OneToOne(relatedMovie);
+    public Business(Movie relatedMovie, int revenue, int budget) {
+        this.oneToOneRelation = new OneToOne<>(relatedMovie);
+        this.revenue = revenue;
+        this.budget = budget;
     }
 
     @Override
     public String toCSV() {
         return oneToOneRelation.getForeignKeyCSVField() + ',' +
-                FormatMethods.toCsvField(revenue) + ',' +
-                FormatMethods.toCsvField(budget) + ',';
+                toCsvField(revenue) + ',' +
+                toCsvField(budget) + ',';
     }
 
     @Override
@@ -25,11 +28,13 @@ public class Business implements Entity {
         return "movie_id,revenue,budget";
     }
 
-    public void setRevenue(int revenue) {
-        this.revenue = revenue;
+    @Override
+    public EntityKey getKey() {
+        return Business.getKey(oneToOneRelation.getRelated());
     }
 
-    public void setBudget(int budget) {
-        this.budget = budget;
+    public static EntityKey getKey(Movie movie) {
+        return movie.getKey();
     }
+
 }

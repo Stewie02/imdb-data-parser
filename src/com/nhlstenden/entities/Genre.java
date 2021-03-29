@@ -1,7 +1,8 @@
 package com.nhlstenden.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.nhlstenden.entities.interfaces.Entity;
+import com.nhlstenden.entities.interfaces.HasId;
+
 import static com.nhlstenden.FormatMethods.toCsvField;
 
 /**
@@ -12,7 +13,6 @@ public class Genre implements Entity, HasId {
 
     private final int id;
     private final String genre;
-    private final List<Movie> movies;
 
     /**
      * Creates the Genre object with the given parameters
@@ -22,7 +22,6 @@ public class Genre implements Entity, HasId {
     public Genre(int id, String genre) {
         this.id = id;
         this.genre = genre;
-        movies = new ArrayList<>();
     }
 
     /**
@@ -35,16 +34,9 @@ public class Genre implements Entity, HasId {
                 toCsvField(genre);
     }
 
-    public void addMovie(Movie movie) {
-        movies.add(movie);
-    }
-
-    public List<Movie> getMovies() {
-        return this.movies;
-    }
-
-    public String getGenre() {
-        return genre;
+    @Override
+    public EntityKey getKey() {
+        return Genre.getKey(genre);
     }
 
     public int getId() {
@@ -58,4 +50,9 @@ public class Genre implements Entity, HasId {
     public String getHeader() {
         return "id,genre";
     }
+
+    public static EntityKey getKey(String genre) {
+        return new EntityKey(genre);
+    }
+
 }

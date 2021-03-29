@@ -1,8 +1,10 @@
 package com.nhlstenden.parsers;
 
 import com.nhlstenden.CurrencyConverter;
+import static com.nhlstenden.Regex.businessRegex;
+import com.nhlstenden.entities.Business;
 import com.nhlstenden.entities.Movie;
-import com.nhlstenden.entities.Movies;
+import com.nhlstenden.entities.containers.Container;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -13,23 +15,25 @@ import java.util.regex.Pattern;
  */
 public class BusinessParser extends LineByLineParser implements Parser {
 
-    private final Movies movies;
-    private Business business;
+    private final Container<Movie> movies;
+    private final Container<Business> business;
+    private BusinessValues businessValues;
 
-    private final Pattern moviePattern;
-    private final Pattern revenuePattern;
-    private final Pattern budgetPattern;
+    private final Pattern businessPattern;
     private CurrencyConverter currencyConverter;
 
     /**
      * This creates the object and takes as a parameter the movieMap
      * @param movies Movies object containing all the movies
      */
-    public BusinessParser(Movies movies) {
+    public BusinessParser(Container<Movie> movies, Container<Business> business) {
+        super("business.list");
         this.movies = movies;
-        this.fileName = "business.list";
+        this.business = business;
 
-        this.business = new Business();
+        this.businessPattern = Pattern.compile(businessRegex);
+
+        this.businessValues = new BusinessValues();
         try {
             this.currencyConverter = new CurrencyConverter();
         } catch (IOException e) {
@@ -37,80 +41,48 @@ public class BusinessParser extends LineByLineParser implements Parser {
             this.currencyConverter = null;
         }
 
-        this.moviePattern = Pattern.compile("MV: \\\"?(.*?)\\\"?\\s+\\((\\d{4}).*\\)\\s(?!\\{)");
-        this.revenuePattern = Pattern.compile("GR:\\s([A-z]+)\\s([0-9,]+)");
-        this.budgetPattern = Pattern.compile("BT:\\s([A-z]+)\\s([0-9,]+)");
     }
 
     @Override
     protected void parseLine(String line) {
-        if (currencyConverter == null) return;
+        if (currencyConverter == null || line.isEmpty()) return;
         String kindOfInfo = line.substring(0, 2);
 
+        System.out.println(line);
+
+        Matcher matcher = businessPattern.matcher(line);
+
         // Let's see what's on the line, now we know what to do
-        switch (kindOfInfo) {
-            case "--" -> {
-                updateMovie(business);
-                business = new Business();
+        if (matcher.find()) {
+            switch (kindOfInfo) {
+                case "--" -> {
+                    updateMovie(businessValues);
+                    businessValues = new BusinessValues();
+                }
+                case "MV" -> {
+                    businessValues.setTitle(matcher.group("mvTitle"));
+                    businessValues.setYear(matcher.group("mvYear").contains("?") ? -1 : Integer.parseInt(matcher.group("mvYear")));
+                    businessValues.setMovieNamePerYear(matcher.group("movieNamePerYear"));
+                }
+                case "BT" -> businessValues.addBudget((int) currencyConverter.convertToEur(matcher.group("btAmount"), matcher.group("btCurrency")));
+                case "GR" -> businessValues.addRevenue((int) currencyConverter.convertToEur(matcher.group("grAmount"), matcher.group("grCurrency")));
             }
-            case "MV" -> parseMovieTitle(line, business);
-            case "BT" -> business.addBudget(parseMovieBudget(line));
-            case "GR" -> business.addRevenue(parseMovieRevenue(line));
         }
     }
 
     /**
      * This function updates all the information in the movie object if it exists
-     * @param business The business object when the updated information
+     * @param businessValues The BusinessValues object when the updated information
      */
-    private void updateMovie(Business business) {
-        Movie movie = movies.findMovie(business.getTitle(), business.getYear(), business.getMovieNamePerYear());
+    private void updateMovie(BusinessValues businessValues) {
+        Movie movie = movies.find(Movie.getKey(businessValues.getTitle(), businessValues.getYear(), businessValues.getMovieNamePerYear()));
         if (movie != null) {
-            movie.setBudget(business.getBudget());
-            movie.setRevenue(business.getRevenue());
+            Business b = new Business(movie, businessValues.getRevenue(), businessValues.getBudget());
+            business.add(b);
         }
         else {
-            System.out.println("Movie: " + business.getTitle() + " wasn't in the movie map!");
+            System.out.println("Movie: " + businessValues.getTitle() + " wasn't in the movie map!");
         }
-    }
-
-    /**
-     * Get's the movie title out of the line
-     * @param line The line containing the movie title
-     */
-    private void parseMovieTitle(String line, Business business) {
-        Matcher matcher = moviePattern.matcher(line);
-        if (matcher.find()) {
-            String movieTitle = matcher.group(1);
-            String movieYear = matcher.group(2);
-
-            business.setTitle(movieTitle);
-            business.setYear(Integer.parseInt(movieYear));
-        }
-    }
-
-    /**
-     * Get's the movie budget out of the line
-     * @param line The line containing the budget
-     * @return The budget
-     */
-    private int parseMovieBudget(String line) {
-        Matcher matcher = budgetPattern.matcher(line);
-        if (matcher.find())
-            return Integer.parseInt(matcher.group(2));
-        return -1;
-    }
-
-    /**
-     * Get's the movie revenue out of the line
-     * @param line The line containing the revenue
-     * @return The revenue
-     */
-    private int parseMovieRevenue(String line) {
-        Matcher matcher = revenuePattern.matcher(line);
-        if (matcher.find())
-            return Integer.parseInt(matcher.group(2));
-        return -1;
     }
 
 }
@@ -118,7 +90,7 @@ public class BusinessParser extends LineByLineParser implements Parser {
 /**
  * This is a small entity class with the information from the business.list
  */
-class Business {
+class BusinessValues {
 
     private String title;
     private int revenue;
@@ -168,6 +140,10 @@ class Business {
 
     public int getBudget() {
         return budget;
+    }
+
+    public void setMovieNamePerYear(String movieNamePerYear) {
+        this.movieNamePerYear = movieNamePerYear;
     }
 
     public String getMovieNamePerYear() {

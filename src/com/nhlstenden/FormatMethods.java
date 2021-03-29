@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 public class FormatMethods {
 
     public static String toCsvField(String value) {
+        if (value == null) return "";
         boolean noQuotes = true;
 
         if (value.contains("\"") || value.contains(",")) {
@@ -22,8 +23,8 @@ public class FormatMethods {
         return Double.toString(value);
     }
 
-    public static String getMovieNamePerYear(Matcher matcher) {
-        return matcher.group("movieNamePerYear") == null ? "" : matcher.group("movieNamePerYear");
+    public static int stringToYear(String s) {
+        return s.contains("?") ? -1 : Integer.parseInt(s);
     }
 
 }

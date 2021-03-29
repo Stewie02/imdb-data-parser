@@ -1,12 +1,11 @@
 package com.nhlstenden.parsers;
 
 import com.nhlstenden.FormatMethods;
-import com.nhlstenden.Regex;
+import static com.nhlstenden.Regex.ratingsRegex;
 import com.nhlstenden.entities.Movie;
-import com.nhlstenden.entities.Movies;
 import com.nhlstenden.entities.Rating;
+import com.nhlstenden.entities.containers.Container;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,18 +15,18 @@ import java.util.regex.Pattern;
 public class RatingsParser extends LineByLineParser {
 
     private final Pattern pattern;
-    private final Movies movies;
-    private final List<Rating> ratings;
+    private final Container<Movie> movies;
+    private final Container<Rating> ratings;
 
     /**
      * Creates the parser object and initializes the pattern
      * @param movies movies objects containing all the movies
      */
-    public RatingsParser(Movies movies, List<Rating> ratings) {
+    public RatingsParser(Container<Movie> movies, Container<Rating> ratings) {
+        super("ratings.list");
         this.movies = movies;
         this.ratings = ratings;
-        this.fileName = "ratings.list";
-        pattern = Pattern.compile(Regex.ratingsRegex);
+        pattern = Pattern.compile(ratingsRegex);
     }
 
     /**
@@ -47,14 +46,12 @@ public class RatingsParser extends LineByLineParser {
             int votes = Integer.parseInt(matcher.group("votes"));
             String title = matcher.group("title");
             String year = matcher.group("year");
-            String movieNamePerYear = FormatMethods.getMovieNamePerYear(matcher);
+            String movieNamePerYear = matcher.group("movieNamePerYear");
 
             // Let's check if the movie with the title exists, if so set the right rating
-            Movie movie = movies.findMovie(title, year, movieNamePerYear);
+            Movie movie = movies.find(Movie.getKey(title, year, movieNamePerYear));
             if (movie != null) {
-                Rating rating = new Rating(movie);
-                rating.setRating(ratingValue);
-                rating.setVotes(votes);
+                Rating rating = new Rating(movie, ratingValue, votes);
                 ratings.add(rating);
 
                 System.out.println("Set the rating for movie: " + title);

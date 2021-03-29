@@ -1,8 +1,9 @@
 package com.nhlstenden.entities;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.nhlstenden.FormatMethods;
+import com.nhlstenden.entities.interfaces.Entity;
+import com.nhlstenden.entities.interfaces.HasId;
+
 import static com.nhlstenden.FormatMethods.toCsvField;
 
 /**
@@ -11,11 +12,11 @@ import static com.nhlstenden.FormatMethods.toCsvField;
  */
 public class Movie implements Entity, HasId {
 
-    private int id;
-    private String title;
-    private int year;
-    private int runningTime = -1;
+    private final int id;
+    private final String title;
+    private final int year;
     private final String movieNamePerYear;
+    private int runningTime = -1;
 
     /**
      * Creates the new Movie object
@@ -42,36 +43,17 @@ public class Movie implements Entity, HasId {
                 toCsvField(runningTime);
     }
 
+    @Override
+    public EntityKey getKey() {
+        return Movie.getKey(title, year, movieNamePerYear);
+    }
+
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public void setRunningTime(int runningTime) {
         this.runningTime = runningTime;
-    }
-
-    public String getMovieNamePerYear() {
-        return movieNamePerYear;
     }
 
     /**
@@ -79,6 +61,17 @@ public class Movie implements Entity, HasId {
      * @return the CSV file header
      */
     public String getHeader() {
-        return "id,title,year,rating,votes,running_time_in_minutes,budget,revenue";
+        return "id,title,year,running_time_in_minutes";
     }
+
+    public static EntityKey getKey(String title, String year, String movieNamePerYear) {
+        return Movie.getKey(title, FormatMethods.stringToYear(year), movieNamePerYear);
+    }
+
+    public static EntityKey getKey(String title, int year, String movieNamePerYear) {
+        if (movieNamePerYear == null)
+            movieNamePerYear = "";
+        return new EntityKey(title + year + movieNamePerYear);
+    }
+
 }

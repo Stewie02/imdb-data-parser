@@ -13,6 +13,10 @@ public abstract class LineByLineParser implements Parser {
 
     protected String fileName;
 
+    public LineByLineParser(String fileName) {
+        this.fileName = fileName;
+    }
+
     /**
      * Parses the whole file and calls for every line the parseLine function
      */

@@ -2,35 +2,44 @@ package com.nhlstenden.parsers;
 
 import com.nhlstenden.entities.Actor;
 import com.nhlstenden.entities.Movie;
-import com.nhlstenden.entities.Movies;
+import com.nhlstenden.entities.containers.Container;
+import com.nhlstenden.relations.ManyToMany;
+import com.nhlstenden.relations.PlaysIn;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.nhlstenden.Regex.actorRegex;
 
 /**
  * This class parses the actors.list file to all different objects
  */
 public class ActorParser extends LineByLineParser {
 
+    private final Container<Actor> actors;
+    private final Container<Movie> movies;
+    private final ManyToMany<Movie, Actor> playsIn;
+
     private Actor currentActor;
-    private final List<Actor> actorList;
-    private final Movies movies;
+    private final Actor.Gender gender;
     private final Pattern pattern;
     private int idCounter = 0;
 
     /**
      * This constructor creates the object and also compiles the regex pattern needed to compile the lines
      * @param file The name of the file
-     * @param actorList The list of actors where the actors will be added
-     * @param movies The Movies object with all the movies
+     * @param actors The Container object of actors where the actors will be added to
+     * @param movies The Container object with all the movies
+     * @param playsIn The ManyToMany object with all the relations between movies and actors
      */
-    public ActorParser(String file, List<Actor> actorList, Movies movies) {
-        this.actorList = actorList;
+    public ActorParser(String file, Container<Actor> actors, Container<Movie> movies, ManyToMany<Movie, Actor> playsIn, Actor.Gender gender) {
+        super(file);
+        this.actors = actors;
         this.movies = movies;
-        this.fileName = file;
+        this.playsIn = playsIn;
+        this.gender = gender;
 
-        this.pattern = Pattern.compile("^(((.*?),\\s+)?(.*?))?\\t+(.*?)\\s+\\((.{4})\\)\\s+(?!\\{.*\\})(\\((as\\s+)?(.*)\\)\\s+)?(\\[(.*)\\])?");
+        this.pattern = Pattern.compile(actorRegex);
     }
 
     @Override
@@ -41,26 +50,28 @@ public class ActorParser extends LineByLineParser {
         // Execute the regex
         Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
-            String lastName = matcher.group(3);
-            String firstName = matcher.group(4);
-            String title = matcher.group(5);
-            String movieYear = matcher.group(6);
+            String lastName = matcher.group("lastName");
+            String firstName = matcher.group("firstName");
+            String title = matcher.group("title");
+            String year = matcher.group("year");
+            String movieNamePerYear = matcher.group("movieNamePerYear");
 
-            // If the firstname isn't null it means we found a new actors so we'll create a new object
-            if (firstName != null) {
-                if (lastName == null) lastName = "";
+            if (matcher.group("seriesEpisodeName") != null) return;
 
-                currentActor = new Actor(++idCounter, firstName, lastName);
-                actorList.add(currentActor);
+            Movie movie = movies.find(Movie.getKey(title, year, movieNamePerYear));
+            if (movie == null) {
+                System.out.println("Actor can't find movie: " + title);
+                return;
             }
 
-            // Let's check if the Movie object exists
-            // If it's the case we'll add the movie to the actors and vice versa
-//            Movie movie = movies.findMovie(movieName, movieYear);
-//            if (movie != null) {
-//                currentActor.addMovie(movie);
-//                movie.addActor(currentActor);
-//            }
+            // A new actor
+            if (firstName != null) {
+                if (lastName == null) lastName = "";
+                currentActor = new Actor(++idCounter, firstName, lastName, gender);
+            }
+
+            actors.add(currentActor);
+            this.playsIn.addRelatedObjects(new PlaysIn(movie, currentActor, matcher.group("characterName")));
         }
     }
 

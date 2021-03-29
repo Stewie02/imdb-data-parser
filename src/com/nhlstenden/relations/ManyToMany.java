@@ -1,33 +1,38 @@
 package com.nhlstenden.relations;
 
-import com.nhlstenden.FormatMethods;
-import com.nhlstenden.entities.HasId;
+import com.nhlstenden.entities.interfaces.HasId;
+import com.nhlstenden.entities.interfaces.Writable;
 
-public class ManyToMany {
+import java.util.ArrayList;
+import java.util.List;
 
-    private final HasId firstObject;
-    private final HasId secondObject;
+public class ManyToMany<FT extends HasId, ST extends HasId> {
 
-    public ManyToMany(HasId firstObject, HasId secondObject) {
-        this.firstObject = firstObject;
-        this.secondObject = secondObject;
+    private final List<RelatedObjects<FT,ST>> relatedObjects;
+
+    public ManyToMany() {
+        relatedObjects = new ArrayList<>();
     }
 
-    public String toCsv() {
-        return FormatMethods.toCsvField(firstObject.getId()) + ',' +
-                FormatMethods.toCsvField(secondObject.getId()) + ',';
+    public void addRelatedObjects(FT first, ST second) {
+        relatedObjects.add(new RelatedObjects<>(first, second));
     }
+
+    public void addRelatedObjects(RelatedObjects<FT, ST> relatedObjects) {
+        this.relatedObjects.add(relatedObjects);
+    }
+
 
     public String getHeader() {
-        return firstObject.getClass().getSimpleName().toLowerCase() + "_id," +
-                secondObject.getClass().getSimpleName().toLowerCase() + "_id";
+        if (relatedObjects.size() == 0) return "";
+
+        return relatedObjects.get(0).getFirstObject().getClass().getSimpleName().toLowerCase() + "_id," +
+                relatedObjects.get(0).getSecondObject().getClass().getSimpleName().toLowerCase() + "_id";
     }
 
-    public HasId getFirstObject() {
-        return firstObject;
+    public List<Writable> getWritableList() {
+        return new ArrayList<>(relatedObjects);
     }
 
-    public HasId getSecondObject() {
-        return secondObject;
-    }
 }
+

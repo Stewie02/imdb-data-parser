@@ -1,22 +1,19 @@
 package com.nhlstenden.entities;
 
+import com.nhlstenden.entities.interfaces.Entity;
 import com.nhlstenden.relations.OneToOne;
 
 import static com.nhlstenden.FormatMethods.toCsvField;
 
 public class Rating implements Entity {
 
-    private final OneToOne oneToOneRelation;
+    private final OneToOne<Movie> oneToOneRelation;
 
-    private double rating = -1;
-    private int votes = 0;
-
-    public Rating(Movie relationWith) {
-        this.oneToOneRelation = new OneToOne(relationWith);
-    }
+    private final double rating;
+    private final int votes;
 
     public Rating(Movie relationWith, double rating, int votes) {
-        this(relationWith);
+        this.oneToOneRelation = new OneToOne<>(relationWith);
         this.rating = rating;
         this.votes = votes;
     }
@@ -33,12 +30,13 @@ public class Rating implements Entity {
         return "movie_id,rates,votes";
     }
 
-    public void setRating(double rating) {
-        this.rating = rating;
+    @Override
+    public EntityKey getKey() {
+        return Rating.getKey(oneToOneRelation.getRelated());
     }
 
-    public void setVotes(int votes) {
-        this.votes = votes;
+    public static EntityKey getKey(Movie movie) {
+        return movie.getKey();
     }
 
 }

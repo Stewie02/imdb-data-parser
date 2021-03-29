@@ -1,10 +1,11 @@
 package com.nhlstenden.parsers;
 
+import static com.nhlstenden.Regex.genreRegex;
 import com.nhlstenden.entities.Genre;
 import com.nhlstenden.entities.Movie;
-import com.nhlstenden.entities.Movies;
+import com.nhlstenden.entities.containers.Container;
+import com.nhlstenden.relations.ManyToMany;
 
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,21 +14,26 @@ import java.util.regex.Pattern;
  */
 public class GenreParser extends LineByLineParser {
 
-    private final Map<String, Genre> genreMap;
-    private final Movies movies;
+    private final Container<Movie> movies;
+    private final Container<Genre> genres;
+    private final ManyToMany<Movie, Genre> moviesGenres;
+
     private final Pattern pattern;
     private int idCounter = 0;
 
     /**
      * Creates the object and takes the required parameters for a good working object
-     * @param genreMap The map where the genres needs to be added
-     * @param movies The Movies object which contains all the movies
+     * @param genres The container where the genres needs to be added
+     * @param movies The container which contains all the movies
+     * @param moviesGenres The ManyToMany object where the relations between movies and genres are stored
      */
-    public GenreParser(Map<String, Genre> genreMap, Movies movies) {
-        this.genreMap = genreMap;
+    public GenreParser(Container<Genre> genres, Container<Movie> movies, ManyToMany<Movie, Genre> moviesGenres) {
+        super("genres.list");
+        this.genres = genres;
         this.movies = movies;
-        // TODO: add regex!
-        this.pattern = Pattern.compile("^\\\"?(.*?)\\\"?\\s+\\((.{4}|.{4}\\/.+)\\)\\s?(?:(?!\\{.*\\(\\#)\\{.*\\})?\\t+(.*)\n");
+        this.moviesGenres = moviesGenres;
+
+        this.pattern = Pattern.compile(genreRegex);
     }
 
     /**
@@ -36,31 +42,32 @@ public class GenreParser extends LineByLineParser {
      */
     @Override
     protected void parseLine(String line) {
+        System.out.println(line);
+
         // Let's execute the regex!
         Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
             // Get the data from the matcher
-            String title = matcher.group(1);
-            String year = matcher.group(2);
-            String genreString = matcher.group(3);
+            String title = matcher.group("title");
+            String year = matcher.group("year");
+            String genreString = matcher.group("genre");
+            String movieNamePerYear = matcher.group("movieNamePerYear");
 
             // If the title and genreString isn't null the regex gave back the information we need
             if (title != null && genreString != null) {
-                // Let's check if the genre already exists, otherwise create the genre
-                Genre genre;
-                if (!genreMap.containsKey(title)) {
-                    genre = new Genre(++idCounter, genreString);
-                    genreMap.put(genreString, genre);
+                Movie movie = movies.find(Movie.getKey(title, year, movieNamePerYear));
+                if (movie == null) {
+                    System.out.println("Genre Movie: " + title + " doesn't exist");
+                    return;
                 }
-                else
-                    genre = genreMap.get(genreString);
 
-                // If the Movie object exists we'll add this genres to it
-//                Movie movie = movies.findMovie(title, year);
-//                if (movie != null) {
-//                    movie.addGenre(genre);
-//                    genre.addMovie(movie);
-//                }
+                Genre genre = genres.find(Genre.getKey(genreString));
+                if (genre == null)
+                    genre = new Genre(++idCounter, genreString);
+
+                genres.add(genre);
+                moviesGenres.addRelatedObjects(movie, genre);
+
             }
         }
     }
