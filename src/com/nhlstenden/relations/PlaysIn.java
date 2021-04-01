@@ -2,6 +2,7 @@ package com.nhlstenden.relations;
 
 import com.nhlstenden.entities.Actor;
 import com.nhlstenden.entities.Movie;
+import static com.nhlstenden.FormatMethods.toCsvField;
 
 public class PlaysIn extends RelatedObjects<Movie, Actor> {
 
@@ -14,8 +15,11 @@ public class PlaysIn extends RelatedObjects<Movie, Actor> {
 
     @Override
     public String toCSV() {
+        String end = "";
+        if (this.playsAs.equals(""))
+            end += "\\n";
         return super.toCSV() + ',' +
-                this.playsAs;
+                toCsvField(this.playsAs) + end;
     }
 
     @Override

@@ -15,7 +15,7 @@ public class CurrencyConverter {
 
     public CurrencyConverter() throws IOException {
         String exchangeRatesStr = getExchangeRates();
-        this.exchangeRates = new JSONObject(exchangeRatesStr).getJSONObject("rates");
+        this.exchangeRates = new JSONObject(exchangeRatesStr).getJSONObject("conversion_rates");
     }
 
     public double convertToEur(double amount, String currency) {
@@ -39,7 +39,7 @@ public class CurrencyConverter {
     }
 
     private String getExchangeRates() throws IOException {
-        String apiUrl = "https://api.exchangeratesapi.io/latest?base=EUR";
+        String apiUrl = "https://v6.exchangerate-api.com/v6/76b97d9b3e2b86fc32149119/latest/EUR";
         HttpURLConnection connection = (HttpURLConnection) new URL(apiUrl).openConnection();
         InputStream inputStream = connection.getInputStream();
 

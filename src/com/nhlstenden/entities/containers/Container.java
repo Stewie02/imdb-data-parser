@@ -15,17 +15,11 @@ public class Container <T extends Entity> {
         map = new HashMap<>();
     }
 
-    private Container(Map<EntityKey, T> map) {
-        this.map = map;
-    }
-
     public T find(EntityKey key) {
         return map.get(key);
     }
 
     public void add(T entity) {
-        if (map.containsKey(entity.getKey()))
-            System.out.println("Key is the same!! " + entity.getKey());
         map.put(entity.getKey(), entity);
     }
 

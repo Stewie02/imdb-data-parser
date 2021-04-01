@@ -32,12 +32,13 @@ public class ActorParser extends LineByLineParser {
      * @param movies The Container object with all the movies
      * @param playsIn The ManyToMany object with all the relations between movies and actors
      */
-    public ActorParser(String file, Container<Actor> actors, Container<Movie> movies, ManyToMany<Movie, Actor> playsIn, Actor.Gender gender) {
+    public ActorParser(String file, Container<Actor> actors, Container<Movie> movies, ManyToMany<Movie, Actor> playsIn, Actor.Gender gender, int idToBegin) {
         super(file);
         this.actors = actors;
         this.movies = movies;
         this.playsIn = playsIn;
         this.gender = gender;
+        this.idCounter = idToBegin;
 
         this.pattern = Pattern.compile(actorRegex);
     }
@@ -56,23 +57,25 @@ public class ActorParser extends LineByLineParser {
             String year = matcher.group("year");
             String movieNamePerYear = matcher.group("movieNamePerYear");
 
-            if (matcher.group("seriesEpisodeName") != null) return;
-
             Movie movie = movies.find(Movie.getKey(title, year, movieNamePerYear));
-            if (movie == null) {
-                System.out.println("Actor can't find movie: " + title);
-                return;
-            }
+            if (movie == null) return;
+
 
             // A new actor
-            if (firstName != null) {
+            if (firstName != null && !firstName.equals("")) {
                 if (lastName == null) lastName = "";
                 currentActor = new Actor(++idCounter, firstName, lastName, gender);
+                actors.add(currentActor);
             }
 
-            actors.add(currentActor);
-            this.playsIn.addRelatedObjects(new PlaysIn(movie, currentActor, matcher.group("characterName")));
+            String character = matcher.group("characterName") == null ? "" : matcher.group("characterName");
+            this.playsIn.addRelatedObjects(new PlaysIn(movie, currentActor, character));
         }
     }
+
+    public int getLastId() {
+        return idCounter;
+    }
+
 
 }

@@ -2,6 +2,9 @@ package com.nhlstenden.relations;
 
 import com.nhlstenden.entities.interfaces.HasId;
 import com.nhlstenden.entities.interfaces.Writable;
+
+import java.util.Objects;
+
 import static com.nhlstenden.FormatMethods.toCsvField;
 
 public class RelatedObjects<FT extends HasId, ST extends HasId> implements Writable {
@@ -19,6 +22,19 @@ public class RelatedObjects<FT extends HasId, ST extends HasId> implements Writa
 
     public ST getSecondObject() {
         return secondObject;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RelatedObjects<?, ?> that = (RelatedObjects<?, ?>) o;
+        return Objects.equals(firstObject, that.firstObject) && Objects.equals(secondObject, that.secondObject);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstObject, secondObject);
     }
 
     @Override

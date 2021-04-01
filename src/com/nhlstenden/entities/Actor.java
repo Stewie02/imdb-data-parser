@@ -43,8 +43,8 @@ public class Actor implements Entity, HasId {
         };
 
         return toCsvField(id) + ',' +
-                toCsvField(lastName) + ',' +
                 toCsvField(firstName) + ',' +
+                toCsvField(lastName) + ',' +
                 genderChar;
     }
 

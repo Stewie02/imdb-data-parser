@@ -51,12 +51,11 @@ public class LocationParser extends LineByLineParser {
             String title = matcher.group("title");
             String year = matcher.group("year");
             String movieNamePerYear = matcher.group("movieNamePerYear");
-            String country = matcher.group("country");
-            String city = matcher.group("city");
-            
+            LocationInformation locationInformation = getLocationInformationFromMatcher(matcher);
+
 
             // If the regex didn't gave all the information back we don't want to use the line
-            if (title != null && country != null) {
+            if (title != null) {
 
                 // Let's grab the Movie from the container
                 Movie movie = movies.find(Movie.getKey(title, year, movieNamePerYear));
@@ -66,9 +65,9 @@ public class LocationParser extends LineByLineParser {
                 }
 
                 // If the location already exists, grab it from the container otherwise create a new one
-                Location location = locations.find(Location.getKey(country, city));
+                Location location = locations.find(Location.getKey(locationInformation.country, locationInformation.city));
                 if (location == null)
-                    location = new Location(++idCounter, city, country);
+                    location = new Location(++idCounter, locationInformation.city, locationInformation.country);
 
                 locations.add(location);
                 moviesLocations.addRelatedObjects(movie, location);
@@ -76,5 +75,48 @@ public class LocationParser extends LineByLineParser {
             }
         }
 
+    }
+
+    private LocationInformation getLocationInformationFromMatcher(Matcher matcher) {
+        String city = "";
+        String country = "";
+        int i = 1;
+        for (; i < 6; i++) {
+            if (matcher.group("locationInfo" + i) == null)
+                break;
+        }
+        switch (i -1) {
+            case 1 -> country = matcher.group("locationInfo1");
+            case 2 -> country = matcher.group("locationInfo2");
+            case 3 -> {
+                city = matcher.group("locationInfo1");
+                country = matcher.group("locationInfo3");
+            }
+            case 4 -> {
+                city = matcher.group("locationInfo2");
+                country = matcher.group("locationInfo4");
+            }
+            case 5 -> {
+                city = matcher.group("locationInfo3");
+                country = matcher.group("locationInfo5");
+            }
+        }
+
+        if (city.matches(".*\\d.*"))
+            city = "";
+        if (country.matches(".*\\d.*"))
+            country = "";
+
+        return new LocationInformation(city, country);
+    }
+}
+
+class LocationInformation {
+    public String country;
+    public String city;
+
+    public LocationInformation(String city, String country) {
+        this.city = city;
+        this.country = country;
     }
 }

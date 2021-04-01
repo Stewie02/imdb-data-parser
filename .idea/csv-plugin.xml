@@ -73,6 +73,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\src\com\nhlstenden\parsers\ActorParser.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\src\com\nhlstenden\parsers\BusinessParser.java">
           <value>
             <Attribute>

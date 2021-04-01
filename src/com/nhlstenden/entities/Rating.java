@@ -27,7 +27,7 @@ public class Rating implements Entity {
 
     @Override
     public String getHeader() {
-        return "movie_id,rates,votes";
+        return "movie_id,rating,votes";
     }
 
     @Override

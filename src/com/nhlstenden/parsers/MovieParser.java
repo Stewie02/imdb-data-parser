@@ -1,6 +1,5 @@
 package com.nhlstenden.parsers;
 
-import com.nhlstenden.FormatMethods;
 import static com.nhlstenden.Regex.moviesRegex;
 import com.nhlstenden.entities.Movie;
 import com.nhlstenden.entities.containers.Container;

@@ -92,11 +92,10 @@ public class ImdbParser {
      * Parses the actors and actresses
      */
     private void parseAllActorsActresses() {
-        ActorParser actorsParser = new ActorParser("actors.list", actors, movies, playsIn, Actor.Gender.MALE);
+        ActorParser actorsParser = new ActorParser("actors.list", actors, movies, playsIn, Actor.Gender.MALE, 0);
         actorsParser.parse();
 
-        ActorParser actressesParser = new ActorParser("actresses.list", actors, movies, playsIn, Actor.Gender.FEMALE);
+        ActorParser actressesParser = new ActorParser("actresses.list", actors, movies, playsIn, Actor.Gender.FEMALE, actorsParser.getLastId());
         actressesParser.parse();
     }
-
 }

@@ -93,8 +93,8 @@ public class BusinessParser extends LineByLineParser implements Parser {
 class BusinessValues {
 
     private String title;
-    private int revenue;
-    private int budget;
+    private int revenue = -1;
+    private int budget = -1;
     private int year;
     private String movieNamePerYear;
 

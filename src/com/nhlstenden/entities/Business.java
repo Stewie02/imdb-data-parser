@@ -20,7 +20,7 @@ public class Business implements Entity {
     public String toCSV() {
         return oneToOneRelation.getForeignKeyCSVField() + ',' +
                 toCsvField(revenue) + ',' +
-                toCsvField(budget) + ',';
+                toCsvField(budget);
     }
 
     @Override
