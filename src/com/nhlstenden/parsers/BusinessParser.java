@@ -64,8 +64,16 @@ public class BusinessParser extends LineByLineParser implements Parser {
                     businessValues.setYear(matcher.group("mvYear").contains("?") ? -1 : Integer.parseInt(matcher.group("mvYear")));
                     businessValues.setMovieNamePerYear(matcher.group("movieNamePerYear"));
                 }
-                case "BT" -> businessValues.addBudget((int) currencyConverter.convertToEur(matcher.group("btAmount"), matcher.group("btCurrency")));
-                case "GR" -> businessValues.addRevenue((int) currencyConverter.convertToEur(matcher.group("grAmount"), matcher.group("grCurrency")));
+                case "BT" -> {
+                    int euros = (int) currencyConverter.convertToEur(matcher.group("btAmount"), matcher.group("btCurrency"));
+                    if (euros != -1)
+                        businessValues.addBudget(euros);
+                }
+                case "GR" -> {
+                    int euros = (int) currencyConverter.convertToEur(matcher.group("grAmount"), matcher.group("grCurrency"));
+                    if (euros != -1)
+                        businessValues.addRevenue(euros);
+                }
             }
         }
     }

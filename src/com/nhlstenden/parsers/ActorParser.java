@@ -60,9 +60,8 @@ public class ActorParser extends LineByLineParser {
             Movie movie = movies.find(Movie.getKey(title, year, movieNamePerYear));
             if (movie == null) return;
 
-
             // A new actor
-            if (firstName != null && !firstName.equals("")) {
+            if (firstName != null && !firstName.equals("") ) {
                 if (lastName == null) lastName = "";
                 currentActor = new Actor(++idCounter, firstName, lastName, gender);
                 actors.add(currentActor);
@@ -76,6 +75,5 @@ public class ActorParser extends LineByLineParser {
     public int getLastId() {
         return idCounter;
     }
-
 
 }

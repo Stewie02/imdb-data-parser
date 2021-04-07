@@ -50,7 +50,7 @@ public class Actor implements Entity, HasId {
 
     @Override
     public EntityKey getKey() {
-        return Actor.getKey(firstName, lastName);
+        return Actor.getKey(id, firstName, lastName);
     }
 
     public int getId() {
@@ -65,8 +65,8 @@ public class Actor implements Entity, HasId {
         return "id,first_name,last_name,gender";
     }
 
-    public static EntityKey getKey(String firstName, String lastName) {
-        return new EntityKey(firstName + lastName);
+    public static EntityKey getKey(int id, String firstName, String lastName) {
+        return new EntityKey(id + firstName + lastName);
     }
 
     public enum Gender {

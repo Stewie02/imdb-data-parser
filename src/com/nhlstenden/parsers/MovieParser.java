@@ -41,11 +41,12 @@ public class MovieParser extends LineByLineParser implements Parser {
             String title = matcher.group("title");
             String year = matcher.group("year");
             String movieNamePerYear = matcher.group("movieNamePerYear");
+            String mediaType = matcher.group("mediaType") == null ? "" : matcher.group("mediaType");
 
             // All of the checked value need to be zero before we know it's a movie!
             if (matcher.group("seriesPeriod") == null && matcher.group("suspended") == null &&
                     matcher.group("seriesEpisodeName") == null && matcher.group("seriesSeason") == null &&
-                    matcher.group("endYear") == null) {
+                    matcher.group("endYear") == null && !mediaType.equals("VG")) {
                 if (year.contains("?")) year = "-1";
                 movies.add(new Movie(++idCounter, title, Integer.parseInt(year), movieNamePerYear));
             }

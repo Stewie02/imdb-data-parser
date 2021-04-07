@@ -17,7 +17,7 @@ public class PlaysIn extends RelatedObjects<Movie, Actor> {
     public String toCSV() {
         String end = "";
         if (this.playsAs.equals(""))
-            end += "\\n";
+            end += "\\N";
         return super.toCSV() + ',' +
                 toCsvField(this.playsAs) + end;
     }

@@ -19,13 +19,13 @@ public class Business implements Entity {
     @Override
     public String toCSV() {
         return oneToOneRelation.getForeignKeyCSVField() + ',' +
-                toCsvField(revenue) + ',' +
-                toCsvField(budget);
+                toCsvField(budget) + ',' +
+                toCsvField(revenue);
     }
 
     @Override
     public String getHeader() {
-        return "movie_id,revenue,budget";
+        return "movie_id,budget,revenue";
     }
 
     @Override

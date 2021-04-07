@@ -1,35 +1,27 @@
 package com.nhlstenden;
 
-import com.nhlstenden.entities.Movie;
-import com.nhlstenden.entities.containers.Container;
-import com.nhlstenden.entities.interfaces.Entity;
 import com.nhlstenden.entities.interfaces.Writable;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This class writes the objects to the CSV files
  */
 public class Writer {
 
-    public void writeWritableList(List<Writable> entities, String fileToWriteTo) {
-        if (entities.size() == 0) {
-            System.out.println("0 entities");
-            return;
-        }
+    public void writeWritableList(List<Writable> writableList, String fileToWriteTo) {
+        if (writableList.size() == 0) return;
+
         createFile(fileToWriteTo);
         try {
             FileWriter writer = new FileWriter(Constants.writeFolder + fileToWriteTo);
-            writer.write(entities.get(0).getHeader() + '\n');
+            writer.write(writableList.get(0).getHeader() + '\n');
 
-            for (Writable e : entities) {
-                writer.write(e.toCSV() + '\n');
+            for (Writable w : writableList) {
+                writer.write(w.toCSV() + '\n');
             }
             writer.close();
         } catch (IOException e) {
