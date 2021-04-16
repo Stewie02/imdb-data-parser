@@ -7,6 +7,7 @@ import com.nhlstenden.entities.Movie;
 import com.nhlstenden.entities.containers.Container;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,8 @@ public class BusinessParser extends LineByLineParser implements Parser {
 
     private final Pattern businessPattern;
     private CurrencyConverter currencyConverter;
+
+    private boolean usedTheBestRevenue = false;
 
     /**
      * This creates the object and takes as a parameter the movieMap
@@ -63,19 +66,30 @@ public class BusinessParser extends LineByLineParser implements Parser {
                     businessValues.setTitle(matcher.group("mvTitle"));
                     businessValues.setYear(matcher.group("mvYear").contains("?") ? -1 : Integer.parseInt(matcher.group("mvYear")));
                     businessValues.setMovieNamePerYear(matcher.group("movieNamePerYear"));
+                    usedTheBestRevenue = false;
                 }
                 case "BT" -> {
                     int euros = (int) currencyConverter.convertToEur(matcher.group("btAmount"), matcher.group("btCurrency"));
-                    if (euros != -1)
-                        businessValues.addBudget(euros);
+                    if (euros > 0)
+                        businessValues.setBudget(euros);
                 }
                 case "GR" -> {
-                    int euros = (int) currencyConverter.convertToEur(matcher.group("grAmount"), matcher.group("grCurrency"));
-                    if (euros != -1)
-                        businessValues.addRevenue(euros);
+                    if (!usedTheBestRevenue) {
+                        int rev = -1;
+                        if (matcher.group("grYear") == null && matcher.group("grInitials").toLowerCase(Locale.ROOT).equals("worldwide")) {
+                            rev = (int) currencyConverter.convertToEur(matcher.group("grAmount"), matcher.group("grCurrency"));
+                            usedTheBestRevenue = true;
+                        }
+                        else if (matcher.group("grInitials").toLowerCase(Locale.ROOT).equals("worldwide")) {
+                            rev = (int) currencyConverter.convertToEur(matcher.group("grAmount"), matcher.group("grCurrency"));
+                        }
+                        if (rev > 0)
+                            businessValues.setRevenue(rev);
+                    }
                 }
             }
         }
+
     }
 
     /**
@@ -111,9 +125,8 @@ class BusinessValues {
      * It also makes sure the numbers stay correct
      * @param revenue The revenue that needs to be added
      */
-    public void addRevenue(int revenue) {
-        if (this.revenue == -1) this.revenue = revenue;
-        else this.revenue += revenue;
+    public void setRevenue(int revenue) {
+        this.revenue += revenue;
     }
 
     /**
@@ -121,9 +134,8 @@ class BusinessValues {
      * It also makes sure the numbers stay correct
      * @param budget The budget that needs to be added
      */
-    public void addBudget(int budget) {
-        if (this.budget == -1) this.budget = budget;
-        else this.budget += budget;
+    public void setBudget(int budget) {
+        this.budget += budget;
     }
 
     public String getTitle() {
