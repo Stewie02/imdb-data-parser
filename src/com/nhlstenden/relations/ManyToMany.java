@@ -36,4 +36,3 @@ public class ManyToMany<FT extends HasId, ST extends HasId> {
     }
 
 }
-
