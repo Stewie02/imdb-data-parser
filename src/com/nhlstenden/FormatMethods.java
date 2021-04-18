@@ -12,8 +12,11 @@ public class FormatMethods {
      */
     public static String toCsvField(String value) {
         if (value == null) return "";
+        // This boolean becomes false if we need to put quotes around the String
         boolean noQuotes = true;
 
+        // If the value contains an quote or comma we're going to put quotes around the string
+        // And we are going to put an extra " before the quote
         if (value.contains("\"") || value.contains(",")) {
             value = value.replace("\"", "\"\"");
             noQuotes = false;
