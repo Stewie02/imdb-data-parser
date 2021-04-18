@@ -6,6 +6,7 @@ public class Main {
 
         System.out.println("We start parsing!");
 
+        // Let's start the parser!!
         ImdbParser parser = new ImdbParser();
         parser.parse();
         parser.writeEverythingToTheFiles();

@@ -58,8 +58,6 @@ public class MovieRunningTimeParser extends LineByLineParser implements Parser {
             if (movie != null) {
                 movie.setRunningTime(runningTime);
             }
-            else
-                System.out.println("RT Movie: " + title + " doesn't exist!");
         }
     }
 

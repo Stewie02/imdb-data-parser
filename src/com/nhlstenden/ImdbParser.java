@@ -38,7 +38,7 @@ public class ImdbParser {
     }
 
     /**
-     * This function parses everything, but really everything. Might take a while!
+     * This function parses everything. Might take a while!
      */
     public void parse() {
         // First parse all the movies and actors/actresses

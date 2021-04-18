@@ -51,6 +51,11 @@ public class Genre implements Entity, HasId {
         return "id,genre";
     }
 
+    /**
+     * Returns the key of a genre which is given in the parameters
+     * @param genre The genre
+     * @return The EntityKey of this genre
+     */
     public static EntityKey getKey(String genre) {
         return new EntityKey(genre);
     }

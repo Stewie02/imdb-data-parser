@@ -56,18 +56,17 @@ public class GenreParser extends LineByLineParser {
             // If the title and genreString isn't null the regex gave back the information we need
             if (title != null && genreString != null) {
                 Movie movie = movies.find(Movie.getKey(title, year, movieNamePerYear));
-                if (movie == null) {
-                    System.out.println("Genre Movie: " + title + " doesn't exist");
-                    return;
+                if (movie == null) return;
+
+                // Let's find the genre, if it doesn't exist we'll create the object
+                Genre genre = genres.find(Genre.getKey(genreString));
+                if (genre == null) {
+                    genre = new Genre(++idCounter, genreString);
+                    genres.add(genre);
                 }
 
-                Genre genre = genres.find(Genre.getKey(genreString));
-                if (genre == null)
-                    genre = new Genre(++idCounter, genreString);
-
-                genres.add(genre);
+                // Add the two relatedObjects
                 moviesGenres.addRelatedObjects(movie, genre);
-
             }
         }
     }

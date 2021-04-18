@@ -40,7 +40,6 @@ public class BusinessParser extends LineByLineParser implements Parser {
         try {
             this.currencyConverter = new CurrencyConverter();
         } catch (IOException e) {
-            System.out.println("Can't parse the currencies. Not parsing the business list");
             this.currencyConverter = null;
         }
 
@@ -50,39 +49,44 @@ public class BusinessParser extends LineByLineParser implements Parser {
     protected void parseLine(String line) {
         if (currencyConverter == null || line.isEmpty()) return;
         String kindOfInfo = line.substring(0, 2);
-
-        System.out.println(line);
-
         Matcher matcher = businessPattern.matcher(line);
 
         // Let's see what's on the line, now we know what to do
         if (matcher.find()) {
             switch (kindOfInfo) {
+                // There is a new movie, let's update the previous one and create a new BusinessValues object
                 case "--" -> {
                     updateMovie(businessValues);
                     businessValues = new BusinessValues();
                 }
+                // Here is the title and other info about the
                 case "MV" -> {
                     businessValues.setTitle(matcher.group("mvTitle"));
                     businessValues.setYear(matcher.group("mvYear").contains("?") ? -1 : Integer.parseInt(matcher.group("mvYear")));
                     businessValues.setMovieNamePerYear(matcher.group("movieNamePerYear"));
                     usedTheBestRevenue = false;
                 }
+                // We'll set the budget in the businessValues
                 case "BT" -> {
                     int euros = (int) currencyConverter.convertToEur(matcher.group("btAmount"), matcher.group("btCurrency"));
                     if (euros > 0)
                         businessValues.setBudget(euros);
                 }
+                // We'll set the revenue in the businessValues
                 case "GR" -> {
+                    // If we already used the best value we'll go on
                     if (!usedTheBestRevenue) {
                         int rev = -1;
+                        // If true we found the best value
                         if (matcher.group("grYear") == null && matcher.group("grInitials").toLowerCase(Locale.ROOT).equals("worldwide")) {
                             rev = (int) currencyConverter.convertToEur(matcher.group("grAmount"), matcher.group("grCurrency"));
                             usedTheBestRevenue = true;
                         }
+                        // There is a value, perhaps not the best
                         else if (matcher.group("grInitials").toLowerCase(Locale.ROOT).equals("worldwide")) {
                             rev = (int) currencyConverter.convertToEur(matcher.group("grAmount"), matcher.group("grCurrency"));
                         }
+                        // If we found a revenue value let's set it
                         if (rev > 0)
                             businessValues.setRevenue(rev);
                     }
@@ -97,13 +101,11 @@ public class BusinessParser extends LineByLineParser implements Parser {
      * @param businessValues The BusinessValues object when the updated information
      */
     private void updateMovie(BusinessValues businessValues) {
+        // Find the movie and if it isn't null we'll add it to the container
         Movie movie = movies.find(Movie.getKey(businessValues.getTitle(), businessValues.getYear(), businessValues.getMovieNamePerYear()));
         if (movie != null) {
             Business b = new Business(movie, businessValues.getRevenue(), businessValues.getBudget());
             business.add(b);
-        }
-        else {
-            System.out.println("Movie: " + businessValues.getTitle() + " wasn't in the movie map!");
         }
     }
 

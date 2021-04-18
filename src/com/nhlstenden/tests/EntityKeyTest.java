@@ -43,13 +43,4 @@ public class EntityKeyTest {
         assertNotEquals(a, b);
     }
 
-    @Test
-    public void testWithMap() {
-        Map<EntityKey, Movie> map = new HashMap<>();
-        Movie m = new Movie(1, "Stefans Film", 2021, "II");
-
-        assertEquals(m.getKey(), m.getKey());
-        map.put(m.getKey(), m);
-        assertEquals(m, map.get(m.getKey()));
-    }
 }

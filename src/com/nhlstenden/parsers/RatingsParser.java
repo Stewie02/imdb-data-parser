@@ -54,14 +54,7 @@ public class RatingsParser extends LineByLineParser {
                 Rating rating = new Rating(movie, ratingValue, votes);
                 ratings.add(rating);
 
-                System.out.println("Set the rating for movie: " + title);
             }
-            else
-                System.out.println("Movie: " + title + " doesn't exist!");
-        }
-        else {
-            System.out.println("Didn't match");
-            System.out.println(line);
         }
     }
 

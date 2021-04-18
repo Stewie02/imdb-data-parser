@@ -77,15 +77,23 @@ public class LocationParser extends LineByLineParser {
 
     }
 
+    /**
+     * This function gets the information from the matcher
+     * @param matcher The matcher holding the information
+     * @return The information
+     */
     private LocationInformation getLocationInformationFromMatcher(Matcher matcher) {
         String city = "";
         String country = "";
         int i = 1;
+
+        // Let's see how many locationInfo the matcher has found
         for (; i < 6; i++) {
             if (matcher.group("locationInfo" + i) == null)
                 break;
         }
-        switch (i -1) {
+        // Depending on how many is found we'll have to get the information differently out of there
+        switch (i - 1) {
             case 1 -> country = matcher.group("locationInfo1");
             case 2 -> country = matcher.group("locationInfo2");
             case 3 -> {
@@ -102,6 +110,7 @@ public class LocationParser extends LineByLineParser {
             }
         }
 
+        // If there is a digit in one of the variables set them to empty
         if (city.matches(".*\\d.*"))
             city = "";
         if (country.matches(".*\\d.*"))
@@ -111,6 +120,9 @@ public class LocationParser extends LineByLineParser {
     }
 }
 
+/**
+ * Small Entity class holding some information
+ */
 class LocationInformation {
     public String country;
     public String city;

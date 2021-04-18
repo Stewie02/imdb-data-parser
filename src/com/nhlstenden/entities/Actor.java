@@ -39,7 +39,6 @@ public class Actor implements Entity, HasId {
         char genderChar = switch (gender) {
             case FEMALE -> 'F';
             case MALE -> 'M';
-            case NEUTRAL -> 'N';
         };
 
         return toCsvField(id) + ',' +
@@ -48,11 +47,20 @@ public class Actor implements Entity, HasId {
                 genderChar;
     }
 
+    /**
+     * Returns the EntityKey of the object
+     * @return the EntityKey of the object
+     */
     @Override
     public EntityKey getKey() {
         return Actor.getKey(id, firstName, lastName);
     }
 
+    /**
+     * The id of the Actor
+     * @return id
+     */
+    @Override
     public int getId() {
         return id;
     }
@@ -65,13 +73,22 @@ public class Actor implements Entity, HasId {
         return "id,first_name,last_name,gender";
     }
 
+    /**
+     * This function returns the EntityKey of a actor
+     * @param id The id of the actor
+     * @param firstName The firstName of the actor
+     * @param lastName The lastName of the actor
+     * @return The EntityKey
+     */
     public static EntityKey getKey(int id, String firstName, String lastName) {
         return new EntityKey(id + firstName + lastName);
     }
 
+    /**
+     * This enum holds the genders which can occur in the database files
+     */
     public enum Gender {
         FEMALE,
-        MALE,
-        NEUTRAL
+        MALE
     }
 }

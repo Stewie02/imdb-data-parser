@@ -58,20 +58,27 @@ public class ActorParser extends LineByLineParser {
             String movieNamePerYear = matcher.group("movieNamePerYear");
 
             Movie movie = movies.find(Movie.getKey(title, year, movieNamePerYear));
+            // If the movie doesn't exist, return!!
             if (movie == null) return;
 
-            // A new actor
+            // We know it's a new Actor!!!
             if (firstName != null && !firstName.equals("") ) {
                 if (lastName == null) lastName = "";
                 currentActor = new Actor(++idCounter, firstName, lastName, gender);
                 actors.add(currentActor);
             }
 
+            // If the characterName isn't equals to null we get the characterName, else an empty String
             String character = matcher.group("characterName") == null ? "" : matcher.group("characterName");
+            // Add the new PlaysIn object in the RelatedObjects
             this.playsIn.addRelatedObjects(new PlaysIn(movie, currentActor, character));
         }
     }
 
+    /**
+     * Returns the last id that is used
+     * @return The last id
+     */
     public int getLastId() {
         return idCounter;
     }

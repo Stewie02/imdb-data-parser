@@ -1,5 +1,8 @@
 package com.nhlstenden;
 
+/**
+ * This class has a few static Strings which are all the regex' used in the whole parser
+ */
 public class Regex {
 
     public static String moviesRegex = "\\\"?(?<title>.*?)\\\"?\\s\\((?<year>\\d{4}|(?<unknownYear>[?]{4}))(?:\\/(?<movieNamePerYear>.*?))?\\)\\s?(?:\\{(?:(?<seriesEpisodeName>.*?)\\s?)(?:\\(\\#(?<seriesSeason>\\d{1,})\\.(?<seriesEpisode>\\d{1,})\\))?\\})?(?:\\((?<mediaType>.{1,2})\\))?(?:\\s+(?<seriesPeriod>(?<startYear>[\\d]{4})\\-(?<endYear>[\\d]{4}|[?]{4})))?(?:\\s\\{(?<suspended>.*\\}))?(?:\\s+(?<yearOfRelease>[\\d]{4}|[?]{4})?)";

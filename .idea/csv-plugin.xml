@@ -52,6 +52,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\src\com\nhlstenden\entities\Business.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\src\com\nhlstenden\entities\EntityKey.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\src\com\nhlstenden\entities\EntityKeyTest.java">
           <value>
             <Attribute>
@@ -109,6 +123,13 @@
           </value>
         </entry>
         <entry key="\src\com\nhlstenden\relations\ManyToMany.java">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\src\com\nhlstenden\relations\OneToOne.java">
           <value>
             <Attribute>
               <option name="separator" value=";" />

@@ -64,10 +64,24 @@ public class Movie implements Entity, HasId {
         return "id,title,year,running_time_in_minutes";
     }
 
+    /**
+     * Returns the EntityKey of the given values in the parameters
+     * @param title The title of the new EntityKey
+     * @param year The year of the new EntityKey
+     * @param movieNamePerYear The movie name per year of the new EntityKey
+     * @return The newly created EntityKey
+     */
     public static EntityKey getKey(String title, String year, String movieNamePerYear) {
         return Movie.getKey(title, FormatMethods.stringToYear(year), movieNamePerYear);
     }
 
+    /**
+     * Returns the EntityKey of the given values in the parameters
+     * @param title The title of the new EntityKey
+     * @param year The year of the new EntityKey
+     * @param movieNamePerYear The movie name per year of the new EntityKey
+     * @return The newly created EntityKey
+     */
     public static EntityKey getKey(String title, int year, String movieNamePerYear) {
         if (movieNamePerYear == null)
             movieNamePerYear = "";
