@@ -18,7 +18,7 @@ public class RelatedObjects<FT extends HasId, ST extends HasId> implements Writa
     private final ST secondObject;
 
     /**
-     * Takes the two relatedObjects in the parameter and assigns them to instance variables
+     * Takes the two relatedObjects in the parameter and assigns them to the instance variables
      * @param first The first object
      * @param second The second object
      */
